@@ -41,7 +41,7 @@
   }
 
   body {
-    @apply bg-candy-background text-foreground overflow-x-hidden;
+    @apply bg-pi-background text-foreground overflow-x-hidden;
     font-family: 'Bubblegum Sans', system-ui, sans-serif;
   }
 
@@ -58,7 +58,7 @@
   .candy-button {
     @apply relative bg-candy-button-primary px-8 py-3 text-white text-lg font-bold rounded-full 
            shadow-lg transition-all duration-300 hover:scale-105 active:scale-95
-           border-b-4 border-purple-700 hover:border-b-2 hover:translate-y-0.5
+           border-b-4 border-[#6E59A5] hover:border-b-2 hover:translate-y-0.5
            overflow-hidden;
   }
 
@@ -73,8 +73,8 @@
            rounded-3xl shadow-xl p-6 relative;
   }
 
-  .donut-icon {
-    @apply w-20 h-20 object-contain transition-all duration-300;
+  .slot-symbol {
+    @apply w-14 h-14 sm:w-16 sm:h-16 md:w-20 md:h-20 object-contain transition-all duration-300;
   }
   
   .jackpot-counter {
@@ -86,6 +86,14 @@
     @apply relative overflow-hidden h-20 border-2 border-candy-border rounded-2xl bg-white/30 backdrop-blur-sm;
   }
 
+  .slot-highlight {
+    @apply border-2 border-yellow-400 bg-yellow-100/30;
+  }
+
+  .pulse-highlight {
+    @apply animate-pulse;
+  }
+
   .slot-strip {
     @apply absolute w-full flex flex-col items-center justify-start;
   }
@@ -95,20 +103,8 @@
            text-white font-bold shadow-md hover:bg-purple-600 transition-colors;
   }
 
-  .donut-awning {
-    @apply absolute top-0 left-0 w-full h-12 bg-gradient-to-r from-red-500 via-white to-red-500 rounded-t-3xl;
-  }
-
-  .awning-scallop {
-    @apply absolute -bottom-3 left-0 w-full h-4 flex;
-  }
-
-  .awning-scallop-item {
-    @apply w-1/5 h-full rounded-b-full bg-white;
-  }
-
-  .awning-scallop-item:nth-child(odd) {
-    @apply bg-red-500;
+  .jackpot-panel {
+    @apply bg-gradient-to-r from-[#1A1F2C]/80 to-[#1A1F2C]/80 p-4 rounded-xl shadow-lg border-2 border-[#FDCC0D] mb-4;
   }
 
   .pi-coin {
@@ -116,15 +112,36 @@
            rounded-full h-5 w-5 mr-1;
   }
 
-  .modal {
-    @apply fixed inset-0 z-50 flex items-center justify-center p-4 backdrop-blur-sm bg-black/50;
-  }
-
-  .modal-content {
-    @apply candy-panel max-w-md w-full mx-auto animate-bounce-in;
+  .menu-button {
+    @apply flex items-center space-x-2 w-full p-3 text-sm font-medium rounded-lg bg-white/30 backdrop-blur-sm
+           hover:bg-white/50 transition-colors;
   }
 
   .win-animation {
     @apply bg-win-gradient bg-[length:200%_100%] animate-win-shine;
+  }
+}
+
+/* Mobile responsiveness improvements */
+@media (max-width: 640px) {
+  .slot-machine-container {
+    padding: 0.5rem;
+  }
+  
+  .candy-panel {
+    padding: 1rem;
+    border-width: 3px;
+  }
+  
+  .jackpot-panel {
+    padding: 0.75rem;
+  }
+  
+  .game-grid {
+    gap: 0.25rem;
+  }
+  
+  .slot-container {
+    height: 4rem;
   }
 }

@@ -20,11 +20,14 @@ const AboutModal: React.FC<AboutModalProps> = ({ open, onOpenChange }) => {
             <X size={18} />
           </button>
           
-          <h2 className="text-2xl font-bold text-center mb-4">About Pi Jackpot</h2>
+          <div className="flex items-center justify-center mb-6">
+            <img src="/assets/images/pi-logo.png" alt="Pi Network" className="w-16 h-16 mr-3" />
+            <h2 className="text-2xl font-bold">Pi Slots</h2>
+          </div>
           
           <div className="mb-6">
             <div className="flex items-center mb-4">
-              <div className="w-10 h-10 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center text-white font-bold shadow-md mr-3">
+              <div className="w-10 h-10 bg-gradient-to-r from-[#9b87f5] to-[#7E69AB] rounded-full flex items-center justify-center text-white font-bold shadow-md mr-3">
                 π
               </div>
               <h3 className="text-lg font-bold">Pi Network Integration</h3>
@@ -34,14 +37,15 @@ const AboutModal: React.FC<AboutModalProps> = ({ open, onOpenChange }) => {
               Connect your Pi wallet to start playing with real Pi coins.
             </p>
             <p className="text-sm mb-2">
-              Pi Jackpot uses the official Pi Network payment platform for secure transactions.
+              Pi Slots uses the official Pi Network payment platform for secure transactions.
             </p>
           </div>
           
           <div className="mb-6">
             <h3 className="text-lg font-bold mb-2">How to Play</h3>
             <ol className="list-decimal list-inside text-sm space-y-2">
-              <li>Set your bet amount and number of lines</li>
+              <li>Set your bet amount per line (10-500π)</li>
+              <li>Choose how many paylines to play (1-20)</li>
               <li>Click SPIN to play</li>
               <li>Match symbols across active paylines to win</li>
               <li>Get special symbols for bonus features</li>

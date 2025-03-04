@@ -1,17 +1,40 @@
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { SymbolType } from "../types/game";
 import { SYMBOLS, getSymbolById } from "../data/symbols";
+import { playSoundIfEnabled } from "../utils/soundUtils";
 
 interface SlotReelProps {
   symbols: SymbolType[];
   isSpinning: boolean;
   delay: number;
+  highlightPositions?: number[];
 }
 
-const SlotReel: React.FC<SlotReelProps> = ({ symbols, isSpinning, delay }) => {
+const SlotReel: React.FC<SlotReelProps> = ({ 
+  symbols, 
+  isSpinning, 
+  delay,
+  highlightPositions = [] 
+}) => {
   const [isAnimating, setIsAnimating] = useState(false);
   const [reelSymbols, setReelSymbols] = useState(symbols);
+  const [shouldHighlight, setShouldHighlight] = useState<boolean[]>([false, false, false]);
+  
+  // Process highlight positions
+  useEffect(() => {
+    if (highlightPositions.length > 0) {
+      const newHighlights = [false, false, false];
+      highlightPositions.forEach(pos => {
+        if (pos >= 0 && pos < 3) {
+          newHighlights[pos] = true;
+        }
+      });
+      setShouldHighlight(newHighlights);
+    } else {
+      setShouldHighlight([false, false, false]);
+    }
+  }, [highlightPositions]);
   
   // Start spinning animation with delay
   useEffect(() => {
@@ -19,6 +42,7 @@ const SlotReel: React.FC<SlotReelProps> = ({ symbols, isSpinning, delay }) => {
       // Delay the start of animation for each reel
       const startDelay = setTimeout(() => {
         setIsAnimating(true);
+        playSoundIfEnabled('spin', 0.3);
       }, delay);
       
       return () => clearTimeout(startDelay);
@@ -64,13 +88,18 @@ const SlotReel: React.FC<SlotReelProps> = ({ symbols, isSpinning, delay }) => {
       {reelSymbols.map((symbol, index) => (
         <div 
           key={index} 
-          className={`slot-container flex items-center justify-center ${isAnimating ? 'animate-slot-spin' : ''}`}
+          className={`
+            slot-container flex items-center justify-center 
+            ${isAnimating ? 'animate-slot-spin' : ''} 
+            ${shouldHighlight[index] ? 'slot-highlight pulse-highlight' : ''}
+          `}
         >
           <div className="p-2 flex items-center justify-center">
             <img 
               src={getSymbolById(symbol).image} 
               alt={getSymbolById(symbol).name}
-              className="donut-icon"
+              className="slot-symbol"
+              title={getSymbolById(symbol).name}
             />
           </div>
         </div>

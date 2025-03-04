@@ -2,25 +2,84 @@
 import React from "react";
 import { useGame } from "./GameContext";
 import { formatNumber } from "../utils/gameLogic";
-import { Minus, Plus, PlayCircle, Pause } from "lucide-react";
+import { Minus, Plus, PlayCircle, Pause, HelpCircle } from "lucide-react";
+import { playSoundIfEnabled } from "../utils/soundUtils";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
-const GameControls: React.FC = () => {
+interface GameControlsProps {
+  onOpenPayTable: () => void;
+}
+
+const GameControls: React.FC<GameControlsProps> = ({ onOpenPayTable }) => {
   const { state, spin, updateBet, updateLines, toggleAutoPlay } = useGame();
   
   // Handlers for bet adjustment
-  const decreaseBet = () => updateBet(state.bet - 10);
-  const increaseBet = () => updateBet(state.bet + 10);
+  const decreaseBet = () => {
+    playSoundIfEnabled('buttonClick');
+    updateBet(state.bet - 10);
+  };
+  
+  const increaseBet = () => {
+    playSoundIfEnabled('buttonClick');
+    updateBet(state.bet + 10);
+  };
+  
+  // Set min/max bet
+  const setMinBet = () => {
+    playSoundIfEnabled('buttonClick');
+    updateBet(10);
+  };
+  
+  const setMaxBet = () => {
+    playSoundIfEnabled('buttonClick');
+    updateBet(500);
+  };
   
   // Handlers for line adjustment
-  const decreaseLines = () => updateLines(state.lines - 1);
-  const increaseLines = () => updateLines(state.lines + 1);
+  const decreaseLines = () => {
+    playSoundIfEnabled('buttonClick');
+    updateLines(state.lines - 1);
+  };
+  
+  const increaseLines = () => {
+    playSoundIfEnabled('buttonClick');
+    updateLines(state.lines + 1);
+  };
+  
+  // Handle spin button
+  const handleSpin = () => {
+    if (!state.isSpinning && state.balance >= state.totalBet) {
+      playSoundIfEnabled('buttonClick');
+      spin();
+    }
+  };
   
   return (
     <div className="game-controls">
       {/* Line controls */}
-      <div className="grid grid-cols-5 gap-4 mb-4">
-        <div className="col-span-2 flex items-center justify-between bg-white/30 backdrop-blur-sm rounded-xl p-3 shadow-sm">
-          <span className="font-bold text-sm">LINES</span>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+        <div className="col-span-1 flex items-center justify-between bg-white/30 backdrop-blur-sm rounded-xl p-3 shadow-sm">
+          <div className="flex items-center">
+            <span className="font-bold text-sm mr-2">PAYLINES</span>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <button 
+                    className="text-muted-foreground hover:text-foreground transition-colors"
+                    onClick={() => {
+                      playSoundIfEnabled('buttonClick');
+                      onOpenPayTable();
+                    }}
+                  >
+                    <HelpCircle size={14} />
+                  </button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p className="text-xs">More paylines = more chances to win!</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </div>
           <div className="flex items-center">
             <button 
               className="control-button" 
@@ -41,8 +100,26 @@ const GameControls: React.FC = () => {
         </div>
         
         {/* Bet controls */}
-        <div className="col-span-2 flex items-center justify-between bg-white/30 backdrop-blur-sm rounded-xl p-3 shadow-sm">
-          <span className="font-bold text-sm">BET</span>
+        <div className="col-span-1 flex items-center justify-between bg-white/30 backdrop-blur-sm rounded-xl p-3 shadow-sm">
+          <div className="flex flex-col">
+            <span className="font-bold text-sm">BET PER LINE</span>
+            <div className="flex space-x-2 mt-1">
+              <button 
+                className="text-xs font-bold bg-purple-100 hover:bg-purple-200 px-2 py-1 rounded-md"
+                onClick={setMinBet}
+                disabled={state.isSpinning}
+              >
+                MIN
+              </button>
+              <button 
+                className="text-xs font-bold bg-purple-100 hover:bg-purple-200 px-2 py-1 rounded-md"
+                onClick={setMaxBet}
+                disabled={state.isSpinning}
+              >
+                MAX
+              </button>
+            </div>
+          </div>
           <div className="flex items-center">
             <button 
               className="control-button" 
@@ -64,30 +141,48 @@ const GameControls: React.FC = () => {
             </button>
           </div>
         </div>
-        
-        {/* Auto play toggle */}
+      </div>
+      
+      {/* Auto play toggle and Total Bet display */}
+      <div className="flex justify-between items-center mb-4">
         <button 
-          className={`flex items-center justify-center rounded-xl p-3 shadow-sm ${
+          className={`flex items-center justify-center rounded-xl p-2 px-4 shadow-sm transition-all ${
             state.autoPlay 
               ? 'bg-candy-button-primary text-white' 
               : 'bg-white/30 backdrop-blur-sm'
           }`}
-          onClick={toggleAutoPlay}
+          onClick={() => {
+            playSoundIfEnabled('buttonClick');
+            toggleAutoPlay();
+          }}
           disabled={state.isSpinning}
         >
           {state.autoPlay ? (
-            <Pause className="mr-1" size={18} />
+            <>
+              <Pause className="mr-1" size={16} />
+              <span className="font-bold text-sm">AUTO ON</span>
+            </>
           ) : (
-            <PlayCircle className="mr-1" size={18} />
+            <>
+              <PlayCircle className="mr-1" size={16} />
+              <span className="font-bold text-sm">AUTO OFF</span>
+            </>
           )}
-          <span className="font-bold text-sm">AUTO</span>
         </button>
+        
+        <div className="bg-white/30 backdrop-blur-sm rounded-xl px-4 py-2 shadow-sm">
+          <div className="text-sm font-bold mb-0">TOTAL BET</div>
+          <div className="flex items-center justify-center">
+            <span className="pi-coin">π</span>
+            <span className="font-bold">{formatNumber(state.totalBet)}</span>
+          </div>
+        </div>
       </div>
       
       {/* Spin button */}
       <button 
         className={`candy-button w-full py-4 text-xl ${state.isSpinning ? 'opacity-70 cursor-not-allowed' : ''}`}
-        onClick={spin}
+        onClick={handleSpin}
         disabled={state.isSpinning || state.balance < state.totalBet}
       >
         {state.freeSpinsRemaining > 0 ? 'FREE SPIN' : 'SPIN'}

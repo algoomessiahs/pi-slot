@@ -64,7 +64,7 @@ export default {
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
 				},
-        // Game specific colors
+        // Game specific colors - Updated with Pi Colors
         donut: {
           pink: '#FF70B5',
           red: '#FF4560',
@@ -76,13 +76,22 @@ export default {
           gold: '#FDCC0D',
         },
         candy: {
-          background: '#FFEFDB',
-          accent: '#FF96AD',
-          border: '#FF4560',
+          background: '#F5F5F7',  // Light background similar to Pi app
+          accent: '#9b87f5',      // Pi primary purple
+          border: '#7E69AB',      // Secondary purple
           button: {
-            primary: '#B76EF0',
-            secondary: '#FFDB58',
+            primary: '#9b87f5',   // Pi primary purple
+            secondary: '#FFDB58', // Yellow accent
           }
+        },
+        pi: {
+          background: '#F5F5F7',  // Light background similar to Pi app
+          primary: '#9b87f5',     // Primary purple
+          secondary: '#7E69AB',   // Secondary purple
+          tertiary: '#6E59A5',    // Tertiary purple
+          dark: '#1A1F2C',        // Dark color
+          light: '#D6BCFA',       // Light purple
+          neutral: '#8E9196',     // Neutral gray
         }
 			},
 			borderRadius: {
@@ -146,8 +155,8 @@ export default {
         'bounce-in': 'bounce-in 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards'
 			},
       backgroundImage: {
-        'candy-pattern': "url('/public/lovable-uploads/ebc2061a-626c-46ac-8686-93d047738ca1.png')",
-        'win-gradient': 'linear-gradient(90deg, #FFDB58, #FF70B5, #FFDB58)',
+        'pi-pattern': "url('/assets/images/pi-pattern.png')",
+        'win-gradient': 'linear-gradient(90deg, #9b87f5, #FFDB58, #9b87f5)',
       },
 		}
 	},
