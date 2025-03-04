@@ -43,6 +43,10 @@
   body {
     @apply bg-candy-background text-foreground overflow-x-hidden;
     font-family: 'Bubblegum Sans', system-ui, sans-serif;
+    background-image: url('/assets/images/pi-background.jpg');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
   }
 
   @font-face {
@@ -51,6 +55,12 @@
     font-weight: normal;
     font-style: normal;
     font-display: swap;
+  }
+  
+  /* Hide scrollbar but allow scrolling */
+  ::-webkit-scrollbar {
+    width: 0;
+    background: transparent;
   }
 }
 
@@ -74,7 +84,7 @@
   }
 
   .donut-icon {
-    @apply w-20 h-20 object-contain transition-all duration-300;
+    @apply w-16 h-16 object-contain transition-all duration-300;
   }
   
   .jackpot-counter {
@@ -83,7 +93,7 @@
   }
 
   .slot-container {
-    @apply relative overflow-hidden h-20 border-2 border-candy-border rounded-2xl bg-white/30 backdrop-blur-sm;
+    @apply relative overflow-hidden h-20 border-2 border-candy-border rounded-2xl bg-white/50 backdrop-blur-sm shadow-inner;
   }
 
   .slot-strip {
@@ -95,20 +105,8 @@
            text-white font-bold shadow-md hover:bg-purple-600 transition-colors;
   }
 
-  .donut-awning {
-    @apply absolute top-0 left-0 w-full h-12 bg-gradient-to-r from-red-500 via-white to-red-500 rounded-t-3xl;
-  }
-
-  .awning-scallop {
-    @apply absolute -bottom-3 left-0 w-full h-4 flex;
-  }
-
-  .awning-scallop-item {
-    @apply w-1/5 h-full rounded-b-full bg-white;
-  }
-
-  .awning-scallop-item:nth-child(odd) {
-    @apply bg-red-500;
+  .jackpot-display {
+    @apply animate-pulse;
   }
 
   .pi-coin {
@@ -127,4 +125,23 @@
   .win-animation {
     @apply bg-win-gradient bg-[length:200%_100%] animate-win-shine;
   }
+  
+  /* New styles for the menu */
+  .menu-item {
+    @apply flex items-center py-2 px-4 rounded-lg hover:bg-white/30 transition-colors;
+  }
+  
+  .menu-icon {
+    @apply mr-3 text-candy-button-primary;
+  }
+}
+
+/* Additional animations */
+@keyframes glow {
+  0%, 100% { filter: drop-shadow(0 0 5px rgba(183, 110, 240, 0.7)); }
+  50% { filter: drop-shadow(0 0 10px rgba(183, 110, 240, 1)); }
+}
+
+.glow-effect {
+  animation: glow 2s infinite;
 }
