@@ -1,6 +1,6 @@
 
 import React from "react";
-import { Coin, X } from "lucide-react";
+import { Coins, X } from "lucide-react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 
 interface AboutModalProps {
@@ -63,7 +63,7 @@ const AboutModal: React.FC<AboutModalProps> = ({ open, onOpenChange }) => {
             className="candy-button w-full mt-2"
             onClick={() => onOpenChange(false)}
           >
-            <Coin className="inline-block mr-2" size={18} />
+            <Coins className="inline-block mr-2" size={18} />
             Start Playing
           </button>
         </div>

@@ -7,7 +7,7 @@ import SlotReel from "./SlotReel";
 import GameControls from "./GameControls";
 import WinDisplay from "./WinDisplay";
 import { toast } from "sonner";
-import { Coin, FolderCog, Menu, RefreshCcw, Trophy, Volume2 } from "lucide-react";
+import { Coins, FolderCog, Menu, RefreshCcw, Trophy, Volume2 } from "lucide-react";
 import { Dialog } from "@/components/ui/dialog";
 import AboutModal from "./modals/AboutModal";
 import SettingsModal from "./modals/SettingsModal";
@@ -129,7 +129,7 @@ const SlotMachine: React.FC = () => {
             className="secondary-button"
             onClick={() => setShowAbout(true)}
           >
-            <Coin className="inline-block mr-1" size={18} /> About Pi
+            <Coins className="inline-block mr-1" size={18} /> About Pi
           </button>
           
           <div className="flex gap-2">
