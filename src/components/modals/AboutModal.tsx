@@ -2,6 +2,7 @@
 import React from "react";
 import { Coins, X } from "lucide-react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { playSoundIfEnabled } from "../../utils/soundUtils";
 
 interface AboutModalProps {
   open: boolean;
@@ -15,7 +16,10 @@ const AboutModal: React.FC<AboutModalProps> = ({ open, onOpenChange }) => {
         <div className="relative candy-panel">
           <button 
             className="absolute top-2 right-2 w-8 h-8 bg-red-500 rounded-full flex items-center justify-center text-white shadow-md"
-            onClick={() => onOpenChange(false)}
+            onClick={() => {
+              playSoundIfEnabled('buttonClick');
+              onOpenChange(false);
+            }}
           >
             <X size={18} />
           </button>
@@ -65,7 +69,10 @@ const AboutModal: React.FC<AboutModalProps> = ({ open, onOpenChange }) => {
           
           <button 
             className="candy-button w-full mt-2"
-            onClick={() => onOpenChange(false)}
+            onClick={() => {
+              playSoundIfEnabled('buttonClick');
+              onOpenChange(false);
+            }}
           >
             <Coins className="inline-block mr-2" size={18} />
             Start Playing

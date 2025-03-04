@@ -29,7 +29,9 @@ const SlotMachine: React.FC = () => {
   // Initialize audio system on first user interaction
   useEffect(() => {
     const handleInteraction = () => {
+      console.log("User interaction detected, initializing audio");
       initAudio();
+      playSoundIfEnabled('buttonClick', 0.3);
       document.removeEventListener('click', handleInteraction);
     };
     
@@ -126,18 +128,30 @@ const SlotMachine: React.FC = () => {
       <div className="candy-panel w-full max-w-4xl relative">
         {/* Menu Button */}
         <MainMenu 
-          onOpenSettings={() => setShowSettings(true)}
-          onOpenPayTable={() => setShowPayTable(true)}
-          onOpenAbout={() => setShowAbout(true)}
+          onOpenSettings={() => {
+            playSoundIfEnabled('buttonClick');
+            setShowSettings(true);
+          }}
+          onOpenPayTable={() => {
+            playSoundIfEnabled('buttonClick');
+            setShowPayTable(true);
+          }}
+          onOpenAbout={() => {
+            playSoundIfEnabled('buttonClick');
+            setShowAbout(true);
+          }}
         />
         
-        {/* Jackpot display */}
-        <div className="jackpot-panel mb-4 relative">
-          <div className="flex items-center justify-center space-x-3">
-            <Trophy size={24} className="text-[#FDCC0D]" />
-            <h2 className="text-2xl font-bold">JACKPOT</h2>
+        {/* Jackpot display - Improved and made more visible */}
+        <div className="jackpot-panel mb-4 relative bg-gradient-to-r from-purple-900/80 to-purple-900/80 backdrop-blur-sm border-2 border-[#FDCC0D] rounded-xl shadow-[0_0_10px_rgba(253,204,13,0.6)] overflow-hidden">
+          <div className="absolute inset-0 bg-[url('/assets/images/pi-pattern.png')] opacity-5"></div>
+          <div className="relative py-2">
+            <div className="flex items-center justify-center space-x-3">
+              <Trophy size={28} className="text-[#FDCC0D]" />
+              <h2 className="text-2xl md:text-3xl font-bold text-white">JACKPOT</h2>
+            </div>
+            <div className="jackpot-counter text-center text-3xl md:text-4xl lg:text-5xl py-1">π {formatNumber(state.jackpot)}</div>
           </div>
-          <div className="jackpot-counter text-center">π {formatNumber(state.jackpot)}</div>
         </div>
         
         {/* Active payline indicator */}
@@ -150,8 +164,8 @@ const SlotMachine: React.FC = () => {
           </div>
         )}
         
-        {/* Game grid */}
-        <div className="game-grid grid grid-cols-5 gap-2 mb-4 overflow-hidden">
+        {/* Game grid - Made the top part transparent */}
+        <div className="game-grid grid grid-cols-5 gap-2 mb-4 overflow-hidden rounded-xl bg-gradient-to-b from-transparent to-white/20 backdrop-blur-sm p-3 border border-white/30">
           {Array(5).fill(null).map((_, colIndex) => (
             <SlotReel 
               key={colIndex} 
@@ -167,7 +181,10 @@ const SlotMachine: React.FC = () => {
         {(state.lastWin > 0 || showWinAnimation) && <WinDisplay winAmount={state.lastWin} />}
         
         {/* Game controls */}
-        <GameControls onOpenPayTable={() => setShowPayTable(true)} />
+        <GameControls onOpenPayTable={() => {
+          playSoundIfEnabled('buttonClick');
+          setShowPayTable(true);
+        }} />
         
         {/* Bottom info bar */}
         <div className="mt-4 grid grid-cols-2 md:grid-cols-3 gap-2 text-center">

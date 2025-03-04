@@ -20,6 +20,35 @@ const SlotReel: React.FC<SlotReelProps> = ({
   const [isAnimating, setIsAnimating] = useState(false);
   const [reelSymbols, setReelSymbols] = useState(symbols);
   const [shouldHighlight, setShouldHighlight] = useState<boolean[]>([false, false, false]);
+  const [imagesLoaded, setImagesLoaded] = useState<{[key: string]: boolean}>({});
+  
+  // Preload all symbol images on mount
+  useEffect(() => {
+    const preloadImages = async () => {
+      console.log("Preloading symbol images...");
+      
+      const loadPromises = SYMBOLS.map((symbol) => {
+        return new Promise<void>((resolve) => {
+          const img = new Image();
+          img.src = symbol.image;
+          img.onload = () => {
+            setImagesLoaded(prev => ({ ...prev, [symbol.id]: true }));
+            console.log(`Loaded symbol image: ${symbol.id}`);
+            resolve();
+          };
+          img.onerror = () => {
+            console.error(`Failed to load symbol image: ${symbol.id} from ${symbol.image}`);
+            resolve();
+          };
+        });
+      });
+      
+      await Promise.all(loadPromises);
+      console.log("All symbol images preloaded");
+    };
+    
+    preloadImages();
+  }, []);
   
   // Process highlight positions
   useEffect(() => {
@@ -83,6 +112,27 @@ const SlotReel: React.FC<SlotReelProps> = ({
     };
   }, [isAnimating]);
   
+  const getSymbolImage = (symbolId: string) => {
+    try {
+      const symbol = getSymbolById(symbolId);
+      return (
+        <img 
+          src={symbol.image} 
+          alt={symbol.name}
+          className="slot-symbol"
+          title={symbol.name}
+          onError={(e) => {
+            console.error(`Error loading image for symbol ${symbolId} from ${symbol.image}`);
+            e.currentTarget.src = '/assets/images/symbols/default.png'; // Fallback image
+          }}
+        />
+      );
+    } catch (error) {
+      console.error(`Error getting symbol by id: ${symbolId}`, error);
+      return <div className="slot-symbol bg-gray-200 flex items-center justify-center">?</div>;
+    }
+  };
+  
   return (
     <div className="flex flex-col gap-2">
       {reelSymbols.map((symbol, index) => (
@@ -95,12 +145,7 @@ const SlotReel: React.FC<SlotReelProps> = ({
           `}
         >
           <div className="p-2 flex items-center justify-center">
-            <img 
-              src={getSymbolById(symbol).image} 
-              alt={getSymbolById(symbol).name}
-              className="slot-symbol"
-              title={getSymbolById(symbol).name}
-            />
+            {getSymbolImage(symbol)}
           </div>
         </div>
       ))}

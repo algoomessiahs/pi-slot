@@ -20,7 +20,12 @@ const soundCache = new Map<string, AudioBuffer>();
 // Initialize audio context (must be triggered by user interaction)
 export const initAudio = (): void => {
   if (!audioContext) {
-    audioContext = new AudioContext();
+    try {
+      audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+      console.log("Audio context initialized successfully");
+    } catch (error) {
+      console.error("Failed to initialize audio context:", error);
+    }
   }
 };
 
@@ -34,7 +39,11 @@ const loadSound = async (url: string): Promise<AudioBuffer> => {
   }
   
   try {
+    console.log(`Loading sound: ${url}`);
     const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
     const arrayBuffer = await response.arrayBuffer();
     const audioBuffer = await audioContext!.decodeAudioData(arrayBuffer);
     soundCache.set(url, audioBuffer);
@@ -50,6 +59,7 @@ export const playSound = async (sound: keyof typeof SOUNDS, volume = 1): Promise
   if (!audioContext) initAudio();
   
   try {
+    console.log(`Attempting to play sound: ${sound}`);
     const audioBuffer = await loadSound(SOUNDS[sound]);
     const source = audioContext!.createBufferSource();
     const gainNode = audioContext!.createGain();
@@ -61,6 +71,7 @@ export const playSound = async (sound: keyof typeof SOUNDS, volume = 1): Promise
     gainNode.connect(audioContext!.destination);
     
     source.start();
+    console.log(`Sound played: ${sound}`);
   } catch (error) {
     console.error('Failed to play sound:', error);
   }
@@ -71,6 +82,7 @@ let isMuted = false;
 
 export const toggleMute = (): boolean => {
   isMuted = !isMuted;
+  console.log(`Sound is now ${isMuted ? 'muted' : 'unmuted'}`);
   return isMuted;
 };
 
@@ -82,5 +94,7 @@ export const isSoundMuted = (): boolean => {
 export const playSoundIfEnabled = async (sound: keyof typeof SOUNDS, volume = 1): Promise<void> => {
   if (!isMuted) {
     await playSound(sound, volume);
+  } else {
+    console.log(`Sound ${sound} not played because audio is muted`);
   }
 };

@@ -83,7 +83,7 @@
   }
 
   .slot-container {
-    @apply relative overflow-hidden h-20 border-2 border-candy-border rounded-2xl bg-white/30 backdrop-blur-sm;
+    @apply relative overflow-hidden h-20 border-2 border-candy-border rounded-2xl bg-white/40 backdrop-blur-sm shadow-inner;
   }
 
   .slot-highlight {
@@ -104,7 +104,7 @@
   }
 
   .jackpot-panel {
-    @apply bg-gradient-to-r from-[#1A1F2C]/80 to-[#1A1F2C]/80 p-4 rounded-xl shadow-lg border-2 border-[#FDCC0D] mb-4;
+    @apply relative rounded-xl shadow-lg mb-4 overflow-hidden;
   }
 
   .pi-coin {
@@ -143,5 +143,37 @@
   
   .slot-container {
     height: 4rem;
+  }
+  
+  .slot-symbol {
+    @apply w-10 h-10;
+  }
+}
+
+/* Keyframe animations */
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+  100% { transform: translateY(0px); }
+}
+
+@keyframes jackpot-shine {
+  0% { background-position: -100% 0; }
+  100% { background-position: 200% 0; }
+}
+
+@keyframes slot-spin {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(-100%); }
+}
+
+/* Make sure the game UI works well in dark mode browsers */
+@media (prefers-color-scheme: dark) {
+  .candy-panel {
+    @apply bg-candy-background/95;
+  }
+  
+  .slot-container {
+    @apply bg-white/50;
   }
 }
