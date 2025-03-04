@@ -59,15 +59,6 @@ const SlotReel: React.FC<SlotReelProps> = ({ symbols, isSpinning, delay }) => {
     };
   }, [isAnimating]);
   
-  // Add glowing effect for special symbols
-  const getSymbolClass = (symbol: SymbolType) => {
-    const symbolData = getSymbolById(symbol);
-    if (symbolData.isSpecial) {
-      return "donut-icon animate-pulse filter drop-shadow-lg";
-    }
-    return "donut-icon";
-  };
-  
   return (
     <div className="flex flex-col gap-2">
       {reelSymbols.map((symbol, index) => (
@@ -79,7 +70,7 @@ const SlotReel: React.FC<SlotReelProps> = ({ symbols, isSpinning, delay }) => {
             <img 
               src={getSymbolById(symbol).image} 
               alt={getSymbolById(symbol).name}
-              className={getSymbolClass(symbol)}
+              className="donut-icon"
             />
           </div>
         </div>
