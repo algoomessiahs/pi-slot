@@ -1,101 +1,130 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    --background: 35 100% 94%;
+    --foreground: 20 28% 18%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card: 35 100% 94%;
+    --card-foreground: 20 28% 18%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover: 35 100% 94%;
+    --popover-foreground: 20 28% 18%;
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    --primary: 350 100% 63%;
+    --primary-foreground: 35 100% 94%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 45 100% 67%;
+    --secondary-foreground: 20 28% 18%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --muted: 35 30% 88%;
+    --muted-foreground: 20 10% 40%;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    --accent: 330 86% 67%;
+    --accent-foreground: 35 100% 94%;
 
     --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive-foreground: 35 100% 94%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    --border: 350 100% 63%;
+    --input: 35 30% 88%;
+    --ring: 350 95% 69%;
 
-    --radius: 0.5rem;
-
-    --sidebar-background: 0 0% 98%;
-
-    --sidebar-foreground: 240 5.3% 26.1%;
-
-    --sidebar-primary: 240 5.9% 10%;
-
-    --sidebar-primary-foreground: 0 0% 98%;
-
-    --sidebar-accent: 240 4.8% 95.9%;
-
-    --sidebar-accent-foreground: 240 5.9% 10%;
-
-    --sidebar-border: 220 13% 91%;
-
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --radius: 1rem;
   }
 
-  .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
-  }
-}
-
-@layer base {
   * {
     @apply border-border;
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-candy-background text-foreground overflow-x-hidden;
+    font-family: 'Bubblegum Sans', system-ui, sans-serif;
+  }
+
+  @font-face {
+    font-family: 'Bubblegum Sans';
+    src: url('/assets/fonts/BubblegumSans-Regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+  }
+}
+
+@layer components {
+  .candy-button {
+    @apply relative bg-candy-button-primary px-8 py-3 text-white text-lg font-bold rounded-full 
+           shadow-lg transition-all duration-300 hover:scale-105 active:scale-95
+           border-b-4 border-purple-700 hover:border-b-2 hover:translate-y-0.5
+           overflow-hidden;
+  }
+
+  .secondary-button {
+    @apply relative bg-candy-button-secondary px-6 py-2 text-foreground text-base font-bold rounded-full 
+           shadow-md transition-all duration-300 hover:scale-105 active:scale-95
+           border-b-4 border-amber-500 hover:border-b-2 hover:translate-y-0.5;
+  }
+
+  .candy-panel {
+    @apply bg-candy-background/90 backdrop-blur-sm border-4 border-candy-border 
+           rounded-3xl shadow-xl p-6 relative;
+  }
+
+  .donut-icon {
+    @apply w-20 h-20 object-contain transition-all duration-300;
+  }
+  
+  .jackpot-counter {
+    @apply font-bold text-2xl sm:text-3xl md:text-4xl bg-gradient-to-r from-amber-300 via-yellow-500 to-amber-300 
+           text-transparent bg-clip-text animate-jackpot-pulse;
+  }
+
+  .slot-container {
+    @apply relative overflow-hidden h-20 border-2 border-candy-border rounded-2xl bg-white/30 backdrop-blur-sm;
+  }
+
+  .slot-strip {
+    @apply absolute w-full flex flex-col items-center justify-start;
+  }
+
+  .control-button {
+    @apply w-8 h-8 bg-candy-button-primary rounded-full flex items-center justify-center 
+           text-white font-bold shadow-md hover:bg-purple-600 transition-colors;
+  }
+
+  .donut-awning {
+    @apply absolute top-0 left-0 w-full h-12 bg-gradient-to-r from-red-500 via-white to-red-500 rounded-t-3xl;
+  }
+
+  .awning-scallop {
+    @apply absolute -bottom-3 left-0 w-full h-4 flex;
+  }
+
+  .awning-scallop-item {
+    @apply w-1/5 h-full rounded-b-full bg-white;
+  }
+
+  .awning-scallop-item:nth-child(odd) {
+    @apply bg-red-500;
+  }
+
+  .pi-coin {
+    @apply inline-flex items-center justify-center text-sm font-medium bg-gradient-to-r from-amber-300 to-amber-500 
+           rounded-full h-5 w-5 mr-1;
+  }
+
+  .modal {
+    @apply fixed inset-0 z-50 flex items-center justify-center p-4 backdrop-blur-sm bg-black/50;
+  }
+
+  .modal-content {
+    @apply candy-panel max-w-md w-full mx-auto animate-bounce-in;
+  }
+
+  .win-animation {
+    @apply bg-win-gradient bg-[length:200%_100%] animate-win-shine;
   }
 }
