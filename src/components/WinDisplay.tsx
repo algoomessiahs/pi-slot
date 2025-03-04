@@ -1,7 +1,6 @@
 
 import React, { useEffect, useState } from "react";
 import { formatNumber } from "../utils/gameLogic";
-import { playSound } from "../utils/soundUtils";
 
 interface WinDisplayProps {
   winAmount: number;
@@ -10,40 +9,16 @@ interface WinDisplayProps {
 const WinDisplay: React.FC<WinDisplayProps> = ({ winAmount }) => {
   const [showCoins, setShowCoins] = useState(false);
   const [coins, setCoins] = useState<{ id: number; left: string; delay: string }[]>([]);
-  const [counter, setCounter] = useState(0);
-  
-  // Increment win amount counter for animation effect
-  useEffect(() => {
-    if (winAmount > 0) {
-      // Reset counter
-      setCounter(0);
-      
-      // Animate counter up to win amount
-      const increment = Math.max(1, Math.ceil(winAmount / 50));
-      const interval = setInterval(() => {
-        setCounter(prev => {
-          if (prev + increment >= winAmount) {
-            clearInterval(interval);
-            return winAmount;
-          }
-          return prev + increment;
-        });
-      }, 20);
-      
-      return () => clearInterval(interval);
-    }
-  }, [winAmount]);
   
   // Generate coins effect
   useEffect(() => {
     if (winAmount > 0) {
       // Only show coins for significant wins
-      if (winAmount >= 500) {
+      if (winAmount >= 1000) {
         setShowCoins(true);
         
         // Generate random coins
-        const coinCount = Math.min(100, Math.floor(winAmount / 100));
-        const newCoins = Array.from({ length: coinCount }, (_, i) => ({
+        const newCoins = Array.from({ length: 30 }, (_, i) => ({
           id: i,
           left: `${Math.random() * 100}%`,
           delay: `${Math.random() * 0.5}s`
@@ -86,7 +61,7 @@ const WinDisplay: React.FC<WinDisplayProps> = ({ winAmount }) => {
           <span className={`
             ${isHugeWin ? 'text-4xl text-donut-gold' : isBigWin ? 'text-3xl text-donut-red' : ''}
           `}>
-            {formatNumber(counter)}
+            {formatNumber(winAmount)}
           </span>
         </div>
       </div>
@@ -97,17 +72,14 @@ const WinDisplay: React.FC<WinDisplayProps> = ({ winAmount }) => {
           {coins.map((coin) => (
             <div
               key={coin.id}
-              className="absolute top-0 animate-coins-rain"
+              className="absolute top-0 text-2xl animate-coins-rain"
               style={{ 
                 left: coin.left, 
-                animationDelay: coin.delay
+                animationDelay: coin.delay,
+                color: Math.random() > 0.5 ? '#FDCC0D' : '#FFD700'
               }}
             >
-              <img 
-                src="/assets/images/pi-coin-gold.png" 
-                alt="Pi Coin" 
-                className="w-8 h-8 object-contain"
-              />
+              🪙
             </div>
           ))}
         </div>
