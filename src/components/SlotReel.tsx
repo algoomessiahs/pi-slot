@@ -21,7 +21,7 @@ const SlotReel: React.FC<SlotReelProps> = ({
   const [reelSymbols, setReelSymbols] = useState(symbols);
   const [shouldHighlight, setShouldHighlight] = useState<boolean[]>([false, false, false]);
   const [imagesLoaded, setImagesLoaded] = useState<{[key: string]: boolean}>({});
-  const [spinSpeed, setSpinSpeed] = useState(100);
+  const [spinSpeed, setSpinSpeed] = useState(80);
   
   // Preload all symbol images on mount
   useEffect(() => {
@@ -72,7 +72,7 @@ const SlotReel: React.FC<SlotReelProps> = ({
       // Delay the start of animation for each reel
       const startDelay = setTimeout(() => {
         setIsAnimating(true);
-        setSpinSpeed(100); // Reset to fast speed
+        setSpinSpeed(80); // Reset to fast speed
         playSoundIfEnabled('spin', 0.3);
       }, delay);
       
@@ -131,49 +131,20 @@ const SlotReel: React.FC<SlotReelProps> = ({
     try {
       const symbol = getSymbolById(symbolId);
       
-      if (symbol.cropPosition) {
-        return (
-          <div 
-            className="slot-symbol-container"
-            style={{
-              width: '100%',
-              height: '100%',
-              overflow: 'hidden',
-              position: 'relative',
-            }}
-          >
-            <img 
-              src={symbol.image} 
-              alt={symbol.name}
-              className="absolute w-full"
-              title={symbol.name}
-              style={{
-                top: `-${symbol.cropPosition.top}%`,
-                clipPath: `inset(${symbol.cropPosition.top}% 0 ${100 - symbol.cropPosition.top - symbol.cropPosition.height}% 0)`,
-                transform: 'scale(1.1)', // Slightly larger to avoid borders
-              }}
-              onError={(e) => {
-                console.error(`Error loading image for symbol ${symbolId} from ${symbol.image}`);
-                e.currentTarget.src = '/assets/images/symbols/default.png'; // Fallback image
-              }}
-            />
-          </div>
-        );
-      } else {
-        // Fallback to original implementation if no crop position
-        return (
+      return (
+        <div className="w-full h-full flex items-center justify-center">
           <img 
             src={symbol.image} 
             alt={symbol.name}
-            className="slot-symbol"
+            className="max-w-full max-h-full object-contain"
             title={symbol.name}
             onError={(e) => {
               console.error(`Error loading image for symbol ${symbolId} from ${symbol.image}`);
-              e.currentTarget.src = '/assets/images/symbols/default.png'; // Fallback image
+              e.currentTarget.src = '/assets/images/symbols/pi-symbol.png'; // Fallback image
             }}
           />
-        );
-      }
+        </div>
+      );
     } catch (error) {
       console.error(`Error getting symbol by id: ${symbolId}`, error);
       return <div className="slot-symbol bg-gray-200 flex items-center justify-center">?</div>;

@@ -60,7 +60,7 @@ const MainMenu: React.FC<MainMenuProps> = ({ onOpenSettings, onOpenPayTable, onO
             {/* Stats Info */}
             <div className="space-y-3">
               <h3 className="font-semibold text-sm uppercase text-muted-foreground">Your Stats</h3>
-              <div className="grid grid-cols-2 gap-3">
+              <div className="flex flex-col gap-3">
                 <div className="bg-white/30 backdrop-blur-sm rounded-xl p-3">
                   <span className="text-xs text-muted-foreground">Balance</span>
                   <div className="flex items-center">
@@ -81,75 +81,76 @@ const MainMenu: React.FC<MainMenuProps> = ({ onOpenSettings, onOpenPayTable, onO
             {/* Menu Options */}
             <div className="space-y-3">
               <h3 className="font-semibold text-sm uppercase text-muted-foreground">Game Options</h3>
-              
-              <SheetClose asChild>
+              <div className="flex flex-col gap-2">
+                <SheetClose asChild>
+                  <button 
+                    className="flex items-center space-x-2 bg-white/30 hover:bg-white/50 backdrop-blur-sm rounded-xl p-3 transition-colors w-full"
+                    onClick={() => {
+                      handleMenuItemClick();
+                      onOpenPayTable();
+                    }}
+                  >
+                    <ListChecks size={18} />
+                    <span>Pay Table</span>
+                  </button>
+                </SheetClose>
+                
+                <SheetClose asChild>
+                  <button 
+                    className="flex items-center space-x-2 bg-white/30 hover:bg-white/50 backdrop-blur-sm rounded-xl p-3 transition-colors w-full"
+                    onClick={() => {
+                      handleMenuItemClick();
+                      onOpenAbout();
+                    }}
+                  >
+                    <HelpCircle size={18} />
+                    <span>How to Play</span>
+                  </button>
+                </SheetClose>
+                
+                <SheetClose asChild>
+                  <button 
+                    className="flex items-center space-x-2 bg-white/30 hover:bg-white/50 backdrop-blur-sm rounded-xl p-3 transition-colors w-full"
+                    onClick={() => {
+                      handleMenuItemClick();
+                      onOpenSettings();
+                    }}
+                  >
+                    <Settings size={18} />
+                    <span>Settings</span>
+                  </button>
+                </SheetClose>
+                
                 <button 
-                  className="menu-button"
-                  onClick={() => {
-                    handleMenuItemClick();
-                    onOpenPayTable();
-                  }}
+                  className="flex items-center space-x-2 bg-white/30 hover:bg-white/50 backdrop-blur-sm rounded-xl p-3 transition-colors w-full"
+                  onClick={handleToggleMute}
                 >
-                  <ListChecks size={18} />
-                  <span>Pay Table</span>
+                  {isMuted ? (
+                    <>
+                      <VolumeX size={18} />
+                      <span>Unmute Sounds</span>
+                    </>
+                  ) : (
+                    <>
+                      <Volume2 size={18} />
+                      <span>Mute Sounds</span>
+                    </>
+                  )}
                 </button>
-              </SheetClose>
-              
-              <SheetClose asChild>
-                <button 
-                  className="menu-button"
-                  onClick={() => {
-                    handleMenuItemClick();
-                    onOpenAbout();
-                  }}
-                >
-                  <HelpCircle size={18} />
-                  <span>How to Play</span>
-                </button>
-              </SheetClose>
-              
-              <SheetClose asChild>
-                <button 
-                  className="menu-button"
-                  onClick={() => {
-                    handleMenuItemClick();
-                    onOpenSettings();
-                  }}
-                >
-                  <Settings size={18} />
-                  <span>Settings</span>
-                </button>
-              </SheetClose>
-              
-              <button 
-                className="menu-button"
-                onClick={handleToggleMute}
-              >
-                {isMuted ? (
-                  <>
-                    <VolumeX size={18} />
-                    <span>Unmute Sounds</span>
-                  </>
-                ) : (
-                  <>
-                    <Volume2 size={18} />
-                    <span>Mute Sounds</span>
-                  </>
-                )}
-              </button>
-              
-              <SheetClose asChild>
-                <button 
-                  className="menu-button text-red-500"
-                  onClick={() => {
-                    handleMenuItemClick();
-                    resetGame();
-                  }}
-                >
-                  <RefreshCw size={18} />
-                  <span>Reset Game</span>
-                </button>
-              </SheetClose>
+                
+                <SheetClose asChild>
+                  <button 
+                    className="flex items-center space-x-2 bg-white/30 hover:bg-white/50 backdrop-blur-sm rounded-xl p-3 transition-colors w-full text-red-500"
+                    onClick={() => {
+                      handleMenuItemClick();
+                      resetGame();
+                    }}
+                  >
+                    <RefreshCw size={18} />
+                    <span>Reset Game</span>
+                  </button>
+                </SheetClose>
+              </div>
             </div>
           </div>
           

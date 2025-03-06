@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from "react";
 import { useGame } from "./GameContext";
 import { formatNumber } from "../utils/gameLogic";
@@ -15,7 +16,7 @@ import { playSoundIfEnabled, initAudio } from "../utils/soundUtils";
 import { PAYLINE_COLORS } from "../data/symbols";
 
 const SlotMachine: React.FC = () => {
-  const { state } = useGame();
+  const { state, spin } = useGame();
   const [showAbout, setShowAbout] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
   const [showPayTable, setShowPayTable] = useState(false);
@@ -42,6 +43,7 @@ const SlotMachine: React.FC = () => {
   useEffect(() => {
     if (state.lastWin > 0) {
       setShowWinAnimation(true);
+      playSoundIfEnabled('win', 0.5);
       
       const timer = setTimeout(() => {
         setShowWinAnimation(false);
@@ -100,9 +102,17 @@ const SlotMachine: React.FC = () => {
     }
     return '#FFFFFF';
   };
+
+  // Handle spin button
+  const handleSpin = () => {
+    if (!state.isSpinning && state.balance >= state.totalBet) {
+      playSoundIfEnabled('buttonClick');
+      spin();
+    }
+  };
   
   return (
-    <div className="slot-machine-container flex flex-col items-center justify-center min-h-screen py-6 px-4 relative">
+    <div className="slot-machine-container flex flex-col items-center justify-center min-h-[100vh] py-4 px-4 relative">
       <div className="absolute top-0 left-0 w-full h-full overflow-hidden -z-10">
         <div className="absolute top-0 left-0 w-full h-full bg-pi-pattern bg-repeat opacity-10"></div>
         <div className="absolute top-[15%] -left-[10%] w-[300px] h-[300px] bg-[#9b87f5] rounded-full blur-[150px] opacity-20"></div>
@@ -110,7 +120,7 @@ const SlotMachine: React.FC = () => {
         <div className="absolute -bottom-[10%] left-[20%] w-[400px] h-[400px] bg-[#FFDB58] rounded-full blur-[200px] opacity-20"></div>
       </div>
       
-      <div className="candy-panel w-full max-w-4xl relative">
+      <div className="candy-panel w-full max-w-md relative">
         <MainMenu 
           onOpenSettings={() => {
             playSoundIfEnabled('buttonClick');
@@ -130,10 +140,10 @@ const SlotMachine: React.FC = () => {
           <div className="absolute inset-0 bg-[url('/assets/images/pi-pattern.png')] opacity-5"></div>
           <div className="relative py-2">
             <div className="flex items-center justify-center space-x-3">
-              <Trophy size={28} className="text-[#FDCC0D]" />
-              <h2 className="text-2xl md:text-3xl font-bold text-white">JACKPOT</h2>
+              <Trophy size={24} className="text-[#FDCC0D]" />
+              <h2 className="text-xl md:text-2xl font-bold text-white">JACKPOT</h2>
             </div>
-            <div className="jackpot-counter text-center text-3xl md:text-4xl lg:text-5xl py-1">π {formatNumber(state.jackpot)}</div>
+            <div className="jackpot-counter text-center text-2xl md:text-3xl py-1">π {formatNumber(state.jackpot)}</div>
           </div>
         </div>
         
@@ -160,12 +170,7 @@ const SlotMachine: React.FC = () => {
         
         {(state.lastWin > 0 || showWinAnimation) && <WinDisplay winAmount={state.lastWin} />}
         
-        <GameControls onOpenPayTable={() => {
-          playSoundIfEnabled('buttonClick');
-          setShowPayTable(true);
-        }} />
-        
-        <div className="mt-4 grid grid-cols-2 md:grid-cols-3 gap-2 text-center">
+        <div className="mt-4 grid grid-cols-3 gap-2 text-center mb-4">
           <div className="bg-white/30 backdrop-blur-sm rounded-xl p-2 shadow-sm">
             <div className="text-sm font-semibold mb-1">BALANCE</div>
             <div className="flex items-center justify-center">
@@ -174,7 +179,7 @@ const SlotMachine: React.FC = () => {
             </div>
           </div>
           
-          <div className="hidden md:block bg-white/30 backdrop-blur-sm rounded-xl p-2 shadow-sm">
+          <div className="bg-white/30 backdrop-blur-sm rounded-xl p-2 shadow-sm">
             <div className="text-sm font-semibold mb-1">TOTAL BET</div>
             <div className="flex items-center justify-center">
               <span className="pi-coin">π</span>
@@ -190,6 +195,14 @@ const SlotMachine: React.FC = () => {
             </div>
           </div>
         </div>
+        
+        <button 
+          className="candy-button w-full py-4 text-xl mb-2 z-10 relative"
+          onClick={handleSpin}
+          disabled={state.isSpinning || state.balance < state.totalBet}
+        >
+          {state.freeSpinsRemaining > 0 ? 'FREE SPIN' : 'SPIN'}
+        </button>
         
         {state.freeSpinsRemaining > 0 && (
           <div className="absolute top-4 right-4 bg-gradient-to-r from-amber-400 to-amber-500 px-4 py-2 rounded-full text-white font-bold shadow-lg animate-pulse">

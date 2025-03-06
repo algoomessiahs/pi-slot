@@ -5,18 +5,18 @@ export const SYMBOLS: Symbol[] = [
   {
     id: 'pi-logo',
     name: 'Pi Logo',
-    image: '/assets/images/symbols/pi-logo.png',
+    image: '/assets/images/symbols/pi-symbol.png',
     value: 50,
     isSpecial: false,
-    cropPosition: { top: 0, height: 11.11 } // First symbol (0-11.11%)
+    cropPosition: { top: 0, height: 100 }
   },
   {
     id: 'pi-symbol',
     name: 'Pi Symbol',
-    image: '/assets/images/symbols/pi-logo.png',
+    image: '/assets/images/symbols/pi-symbol.png',
     value: 40,
     isSpecial: false,
-    cropPosition: { top: 11.11, height: 11.11 } // Second symbol (11.11-22.22%)
+    cropPosition: { top: 0, height: 100 }
   },
   {
     id: 'pi-314',
@@ -24,7 +24,7 @@ export const SYMBOLS: Symbol[] = [
     image: '/assets/images/symbols/3.14.png',
     value: 30,
     isSpecial: false,
-    cropPosition: { top: 22.22, height: 11.11 } // Third symbol (22.22-33.33%)
+    cropPosition: { top: 0, height: 100 }
   },
   {
     id: 'pi-bcv',
@@ -32,7 +32,7 @@ export const SYMBOLS: Symbol[] = [
     image: '/assets/images/symbols/gcv.png',
     value: 25,
     isSpecial: false,
-    cropPosition: { top: 33.33, height: 11.11 } // Fourth symbol (33.33-44.44%)
+    cropPosition: { top: 0, height: 100 }
   },
   {
     id: 'pi-node',
@@ -40,7 +40,7 @@ export const SYMBOLS: Symbol[] = [
     image: '/assets/images/symbols/pi-coin.png',
     value: 20,
     isSpecial: false,
-    cropPosition: { top: 44.44, height: 11.11 } // Fifth symbol (44.44-55.55%)
+    cropPosition: { top: 0, height: 100 }
   },
   {
     id: 'pi-314-alt',
@@ -48,15 +48,15 @@ export const SYMBOLS: Symbol[] = [
     image: '/assets/images/symbols/3.14.png',
     value: 15,
     isSpecial: true,
-    cropPosition: { top: 55.55, height: 11.11 } // Sixth symbol (55.55-66.66%)
+    cropPosition: { top: 0, height: 100 }
   },
   {
     id: 'pi-symbol-alt',
     name: 'Pi Symbol Alt',
-    image: '/assets/images/symbols/pi-logo.png',
+    image: '/assets/images/symbols/pi-symbol.png',
     value: 10,
     isSpecial: false,
-    cropPosition: { top: 66.66, height: 11.11 } // Seventh symbol (66.66-77.77%)
+    cropPosition: { top: 0, height: 100 }
   },
   {
     id: 'pi-node-alt',
@@ -64,7 +64,7 @@ export const SYMBOLS: Symbol[] = [
     image: '/assets/images/symbols/pi-coin.png',
     value: 5,
     isSpecial: true,
-    cropPosition: { top: 77.77, height: 11.11 } // Eighth symbol (77.77-88.88%)
+    cropPosition: { top: 0, height: 100 }
   },
   {
     id: 'pi-special',
@@ -72,7 +72,7 @@ export const SYMBOLS: Symbol[] = [
     image: '/assets/images/symbols/Jackpot.png',
     value: 100,
     isSpecial: true,
-    cropPosition: { top: 88.88, height: 11.11 } // Ninth symbol (88.88-100%)
+    cropPosition: { top: 0, height: 100 }
   }
 ];
 

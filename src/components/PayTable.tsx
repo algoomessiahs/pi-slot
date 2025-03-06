@@ -54,23 +54,12 @@ const PayTable: React.FC<PayTableProps> = ({ open, onOpenChange }) => {
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
               {regularSymbols.map((symbol) => (
                 <div key={symbol.id} className="flex flex-col items-center bg-white/30 backdrop-blur-sm rounded-xl p-3">
-                  <div className="mb-2">
-                    <div 
-                      className="w-16 h-16 overflow-hidden rounded-full border-2 border-purple-500"
-                      style={{
-                        position: 'relative'
-                      }}
-                    >
-                      <img 
-                        src={symbol.image} 
-                        alt={symbol.name} 
-                        className="absolute w-full"
-                        style={{
-                          top: `-${symbol.cropPosition?.top || 0}%`,
-                          clipPath: `inset(${symbol.cropPosition?.top || 0}% 0 ${100 - (symbol.cropPosition?.top || 0) - (symbol.cropPosition?.height || 100)}% 0)`,
-                        }}
-                      />
-                    </div>
+                  <div className="mb-2 w-16 h-16 flex items-center justify-center">
+                    <img 
+                      src={symbol.image} 
+                      alt={symbol.name} 
+                      className="max-w-full max-h-full object-contain"
+                    />
                   </div>
                   <h4 className="text-lg font-bold">{symbol.name}</h4>
                   <p className="text-center mt-1">
@@ -88,23 +77,12 @@ const PayTable: React.FC<PayTableProps> = ({ open, onOpenChange }) => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {specialSymbols.map((symbol) => (
                 <div key={symbol.id} className="flex items-start bg-white/30 backdrop-blur-sm rounded-xl p-4">
-                  <div className="mr-4">
-                    <div 
-                      className="w-14 h-14 overflow-hidden rounded-full border-2 border-yellow-500"
-                      style={{
-                        position: 'relative'
-                      }}
-                    >
-                      <img 
-                        src={symbol.image} 
-                        alt={symbol.name} 
-                        className="absolute w-full"
-                        style={{
-                          top: `-${symbol.cropPosition?.top || 0}%`,
-                          clipPath: `inset(${symbol.cropPosition?.top || 0}% 0 ${100 - (symbol.cropPosition?.top || 0) - (symbol.cropPosition?.height || 100)}% 0)`,
-                        }}
-                      />
-                    </div>
+                  <div className="mr-4 w-14 h-14 flex items-center justify-center">
+                    <img 
+                      src={symbol.image} 
+                      alt={symbol.name} 
+                      className="max-w-full max-h-full object-contain"
+                    />
                   </div>
                   <div>
                     <h4 className="font-bold text-lg">{symbol.name}</h4>
