@@ -5,7 +5,7 @@ export const SYMBOLS: Symbol[] = [
   {
     id: 'pi-logo',
     name: 'Pi Logo',
-    image: '/lovable-uploads/06b57cc4-67e1-495b-8eea-1839efed7802.png',
+    image: '/assets/images/symbols/pi-logo.png',
     value: 50,
     isSpecial: false,
     cropPosition: { top: 0, height: 11.11 } // First symbol (0-11.11%)
@@ -13,7 +13,7 @@ export const SYMBOLS: Symbol[] = [
   {
     id: 'pi-symbol',
     name: 'Pi Symbol',
-    image: '/lovable-uploads/06b57cc4-67e1-495b-8eea-1839efed7802.png',
+    image: '/assets/images/symbols/pi-logo.png',
     value: 40,
     isSpecial: false,
     cropPosition: { top: 11.11, height: 11.11 } // Second symbol (11.11-22.22%)
@@ -21,7 +21,7 @@ export const SYMBOLS: Symbol[] = [
   {
     id: 'pi-314',
     name: '3.14',
-    image: '/lovable-uploads/06b57cc4-67e1-495b-8eea-1839efed7802.png',
+    image: '/assets/images/symbols/3.14.png',
     value: 30,
     isSpecial: false,
     cropPosition: { top: 22.22, height: 11.11 } // Third symbol (22.22-33.33%)
@@ -29,7 +29,7 @@ export const SYMBOLS: Symbol[] = [
   {
     id: 'pi-bcv',
     name: 'BCV',
-    image: '/lovable-uploads/06b57cc4-67e1-495b-8eea-1839efed7802.png',
+    image: '/assets/images/symbols/gcv.png',
     value: 25,
     isSpecial: false,
     cropPosition: { top: 33.33, height: 11.11 } // Fourth symbol (33.33-44.44%)
@@ -37,7 +37,7 @@ export const SYMBOLS: Symbol[] = [
   {
     id: 'pi-node',
     name: 'Pi Node',
-    image: '/lovable-uploads/06b57cc4-67e1-495b-8eea-1839efed7802.png',
+    image: '/assets/images/symbols/pi-coin.png',
     value: 20,
     isSpecial: false,
     cropPosition: { top: 44.44, height: 11.11 } // Fifth symbol (44.44-55.55%)
@@ -45,7 +45,7 @@ export const SYMBOLS: Symbol[] = [
   {
     id: 'pi-314-alt',
     name: '3.14 Alt',
-    image: '/lovable-uploads/06b57cc4-67e1-495b-8eea-1839efed7802.png',
+    image: '/assets/images/symbols/3.14.png',
     value: 15,
     isSpecial: true,
     cropPosition: { top: 55.55, height: 11.11 } // Sixth symbol (55.55-66.66%)
@@ -53,7 +53,7 @@ export const SYMBOLS: Symbol[] = [
   {
     id: 'pi-symbol-alt',
     name: 'Pi Symbol Alt',
-    image: '/lovable-uploads/06b57cc4-67e1-495b-8eea-1839efed7802.png',
+    image: '/assets/images/symbols/pi-logo.png',
     value: 10,
     isSpecial: false,
     cropPosition: { top: 66.66, height: 11.11 } // Seventh symbol (66.66-77.77%)
@@ -61,7 +61,7 @@ export const SYMBOLS: Symbol[] = [
   {
     id: 'pi-node-alt',
     name: 'Pi Node Alt',
-    image: '/lovable-uploads/06b57cc4-67e1-495b-8eea-1839efed7802.png',
+    image: '/assets/images/symbols/pi-coin.png',
     value: 5,
     isSpecial: true,
     cropPosition: { top: 77.77, height: 11.11 } // Eighth symbol (77.77-88.88%)
@@ -69,7 +69,7 @@ export const SYMBOLS: Symbol[] = [
   {
     id: 'pi-special',
     name: 'Pi Special',
-    image: '/lovable-uploads/06b57cc4-67e1-495b-8eea-1839efed7802.png',
+    image: '/assets/images/symbols/Jackpot.png',
     value: 100,
     isSpecial: true,
     cropPosition: { top: 88.88, height: 11.11 } // Ninth symbol (88.88-100%)
