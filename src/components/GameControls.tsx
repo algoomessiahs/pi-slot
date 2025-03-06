@@ -16,23 +16,25 @@ const GameControls: React.FC<GameControlsProps> = ({ onOpenPayTable }) => {
   // Handlers for bet adjustment
   const decreaseBet = () => {
     playSoundIfEnabled('buttonClick');
-    updateBet(state.bet - 10);
+    // Decrease by 0.5 Pi for smaller increments
+    updateBet(Math.round((state.bet - 0.5) * 100) / 100);
   };
   
   const increaseBet = () => {
     playSoundIfEnabled('buttonClick');
-    updateBet(state.bet + 10);
+    // Increase by 0.5 Pi for smaller increments
+    updateBet(Math.round((state.bet + 0.5) * 100) / 100);
   };
   
   // Set min/max bet
   const setMinBet = () => {
     playSoundIfEnabled('buttonClick');
-    updateBet(10);
+    updateBet(0.5); // Min bet is 0.5 Pi
   };
   
   const setMaxBet = () => {
     playSoundIfEnabled('buttonClick');
-    updateBet(500);
+    updateBet(10); // Max bet is 10 Pi
   };
   
   // Handlers for line adjustment
@@ -92,7 +94,7 @@ const GameControls: React.FC<GameControlsProps> = ({ onOpenPayTable }) => {
             <button 
               className="control-button" 
               onClick={increaseLines}
-              disabled={state.lines >= 20 || state.isSpinning}
+              disabled={state.lines >= 8 || state.isSpinning}
             >
               <Plus size={16} />
             </button>
@@ -109,14 +111,14 @@ const GameControls: React.FC<GameControlsProps> = ({ onOpenPayTable }) => {
                 onClick={setMinBet}
                 disabled={state.isSpinning}
               >
-                MIN
+                MIN (0.5π)
               </button>
               <button 
                 className="text-xs font-bold bg-purple-100 hover:bg-purple-200 px-2 py-1 rounded-md"
                 onClick={setMaxBet}
                 disabled={state.isSpinning}
               >
-                MAX
+                MAX (10π)
               </button>
             </div>
           </div>
@@ -124,18 +126,18 @@ const GameControls: React.FC<GameControlsProps> = ({ onOpenPayTable }) => {
             <button 
               className="control-button" 
               onClick={decreaseBet}
-              disabled={state.bet <= 10 || state.isSpinning}
+              disabled={state.bet <= 0.5 || state.isSpinning}
             >
               <Minus size={16} />
             </button>
             <div className="mx-3 flex items-center">
               <span className="pi-coin">π</span>
-              <span className="font-bold">{state.bet}</span>
+              <span className="font-bold">{state.bet.toFixed(1)}</span>
             </div>
             <button 
               className="control-button" 
               onClick={increaseBet}
-              disabled={state.bet >= 500 || state.isSpinning}
+              disabled={state.bet >= 10 || state.isSpinning}
             >
               <Plus size={16} />
             </button>

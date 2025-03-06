@@ -1,21 +1,14 @@
 
 export type SymbolType = 
-  | 'donut-white' 
-  | 'donut-yellow' 
-  | 'donut-pink' 
-  | 'donut-red' 
-  | 'donut-purple' 
-  | 'donut-brown' 
-  | 'letter-a' 
-  | 'letter-n' 
-  | 'letter-k' 
-  | 'letter-l' 
-  | 'letter-m' 
-  | 'special-wild' 
-  | 'special-scatter' 
-  | 'special-free-spin' 
-  | 'special-bonus' 
-  | 'special-jackpot';
+  | 'pi-logo' 
+  | 'pi-symbol' 
+  | 'pi-314' 
+  | 'pi-bcv' 
+  | 'pi-node' 
+  | 'pi-314-alt' 
+  | 'pi-symbol-alt' 
+  | 'pi-node-alt' 
+  | 'pi-special';
 
 export interface Symbol {
   id: SymbolType;
@@ -23,6 +16,10 @@ export interface Symbol {
   image: string;
   value: number;
   isSpecial: boolean;
+  cropPosition?: {
+    top: number;
+    height: number;
+  };
 }
 
 export interface WinLine {

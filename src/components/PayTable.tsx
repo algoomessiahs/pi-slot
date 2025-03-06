@@ -34,8 +34,16 @@ const PayTable: React.FC<PayTableProps> = ({ open, onOpenChange }) => {
           <div className="mb-6">
             <h3 className="text-xl font-bold mb-2">How To Win</h3>
             <p className="mb-4">
-              Match 3 or more identical symbols on a payline from left to right to win. 
-              The more matching symbols, the higher the payout!
+              Match 3 identical symbols in a row, column, or diagonal to win. The more valuable the symbol, the higher the payout!
+            </p>
+            <p className="mb-2">
+              <strong>House Edge:</strong> 5% (5% of bets also contribute to the jackpot pool)
+            </p>
+            <p className="mb-2">
+              <strong>Minimum Bet:</strong> 0.5 Pi per line
+            </p>
+            <p className="mb-2">
+              <strong>Maximum Bet:</strong> 10 Pi per line
             </p>
           </div>
           
@@ -43,34 +51,34 @@ const PayTable: React.FC<PayTableProps> = ({ open, onOpenChange }) => {
           
           <div className="mb-6">
             <h3 className="text-xl font-bold mb-4">Regular Symbols</h3>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Symbol</TableHead>
-                  <TableHead>Name</TableHead>
-                  <TableHead className="text-right">3 Symbols</TableHead>
-                  <TableHead className="text-right">4 Symbols</TableHead>
-                  <TableHead className="text-right">5 Symbols</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {regularSymbols.map((symbol) => (
-                  <TableRow key={symbol.id}>
-                    <TableCell>
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+              {regularSymbols.map((symbol) => (
+                <div key={symbol.id} className="flex flex-col items-center bg-white/30 backdrop-blur-sm rounded-xl p-3">
+                  <div className="mb-2">
+                    <div 
+                      className="w-16 h-16 overflow-hidden rounded-full border-2 border-purple-500"
+                      style={{
+                        position: 'relative'
+                      }}
+                    >
                       <img 
                         src={symbol.image} 
                         alt={symbol.name} 
-                        className="w-10 h-10 object-contain"
+                        className="absolute w-full"
+                        style={{
+                          top: `-${symbol.cropPosition?.top || 0}%`,
+                          clipPath: `inset(${symbol.cropPosition?.top || 0}% 0 ${100 - (symbol.cropPosition?.top || 0) - (symbol.cropPosition?.height || 100)}% 0)`,
+                        }}
                       />
-                    </TableCell>
-                    <TableCell className="font-medium">{symbol.name}</TableCell>
-                    <TableCell className="text-right">{symbol.value * 3}</TableCell>
-                    <TableCell className="text-right">{symbol.value * 10}</TableCell>
-                    <TableCell className="text-right">{symbol.value * 50}</TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+                    </div>
+                  </div>
+                  <h4 className="text-lg font-bold">{symbol.name}</h4>
+                  <p className="text-center mt-1">
+                    3 in a row: <span className="font-bold">× {symbol.value}</span>
+                  </p>
+                </div>
+              ))}
+            </div>
           </div>
           
           <Separator className="my-4" />
@@ -81,28 +89,33 @@ const PayTable: React.FC<PayTableProps> = ({ open, onOpenChange }) => {
               {specialSymbols.map((symbol) => (
                 <div key={symbol.id} className="flex items-start bg-white/30 backdrop-blur-sm rounded-xl p-4">
                   <div className="mr-4">
-                    <img 
-                      src={symbol.image} 
-                      alt={symbol.name} 
-                      className="w-14 h-14 object-contain"
-                    />
+                    <div 
+                      className="w-14 h-14 overflow-hidden rounded-full border-2 border-yellow-500"
+                      style={{
+                        position: 'relative'
+                      }}
+                    >
+                      <img 
+                        src={symbol.image} 
+                        alt={symbol.name} 
+                        className="absolute w-full"
+                        style={{
+                          top: `-${symbol.cropPosition?.top || 0}%`,
+                          clipPath: `inset(${symbol.cropPosition?.top || 0}% 0 ${100 - (symbol.cropPosition?.top || 0) - (symbol.cropPosition?.height || 100)}% 0)`,
+                        }}
+                      />
+                    </div>
                   </div>
                   <div>
                     <h4 className="font-bold text-lg">{symbol.name}</h4>
-                    {symbol.id === 'special-wild' && (
-                      <p>Substitutes for any regular symbol to complete winning combinations.</p>
+                    {symbol.id === 'pi-314-alt' && (
+                      <p>Wild symbol - substitutes for any regular symbol to complete winning combinations.</p>
                     )}
-                    {symbol.id === 'special-scatter' && (
-                      <p>3 or more Scatter symbols anywhere on the reels award 10 free spins.</p>
+                    {symbol.id === 'pi-node-alt' && (
+                      <p>Scatter symbol - 2 or more anywhere on the reels award free spins! 2 scatters = 1 free spin, 3 scatters = 5 free spins.</p>
                     )}
-                    {symbol.id === 'special-free-spin' && (
-                      <p>3 or more Free Spin symbols award additional free spins.</p>
-                    )}
-                    {symbol.id === 'special-bonus' && (
-                      <p>3 or more Bonus symbols trigger the bonus game.</p>
-                    )}
-                    {symbol.id === 'special-jackpot' && (
-                      <p>5 Jackpot symbols on a payline award the progressive jackpot!</p>
+                    {symbol.id === 'pi-special' && (
+                      <p>Jackpot symbol - 3 Jackpot symbols in a row award the progressive jackpot!</p>
                     )}
                   </div>
                 </div>
@@ -115,13 +128,13 @@ const PayTable: React.FC<PayTableProps> = ({ open, onOpenChange }) => {
           <div className="mb-4">
             <h3 className="text-xl font-bold mb-2">Paylines</h3>
             <p className="mb-4">
-              This game has 20 possible paylines. You can select how many lines to play (1-20). 
+              This game has 8 possible paylines. You can select how many lines to play (1-8). 
               More lines means more chances to win, but also increases your total bet.
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="bg-white/30 backdrop-blur-sm rounded-xl p-4">
                 <h4 className="font-bold mb-2">What are paylines?</h4>
-                <p>Paylines are the patterns across the reels where matching symbols must land to create a win.</p>
+                <p>Paylines include horizontal rows, diagonals, and special patterns where matching symbols must land to create a win.</p>
               </div>
               <div className="bg-white/30 backdrop-blur-sm rounded-xl p-4">
                 <h4 className="font-bold mb-2">How is my bet calculated?</h4>

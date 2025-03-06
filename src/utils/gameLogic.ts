@@ -1,29 +1,22 @@
 
 import { SpinResult, SymbolType, WinLine } from "../types/game";
-import { SYMBOLS, PAY_LINES, getSymbolById } from "../data/symbols";
+import { SYMBOLS, PAY_LINES, getSymbolById, HOUSE_EDGE } from "../data/symbols";
 
 // Constants for grid size
 const ROWS = 3;
-const COLS = 5;
+const COLS = 3; // Changed from 5 to 3
 
 // Probability weights for different symbols
-const SYMBOL_WEIGHTS: Record<SymbolType, number> = {
-  'donut-white': 20,
-  'donut-yellow': 18,
-  'donut-pink': 16,
-  'donut-red': 14,
-  'donut-purple': 12,
-  'donut-brown': 10,
-  'letter-a': 15,
-  'letter-n': 15,
-  'letter-k': 15,
-  'letter-l': 15,
-  'letter-m': 15,
-  'special-wild': 4,
-  'special-scatter': 3,
-  'special-free-spin': 2,
-  'special-bonus': 1,
-  'special-jackpot': 0.5,
+const SYMBOL_WEIGHTS: Record<string, number> = {
+  'pi-logo': 15,
+  'pi-symbol': 18,
+  'pi-314': 20,
+  'pi-bcv': 22,
+  'pi-node': 25,
+  'pi-314-alt': 12,
+  'pi-symbol-alt': 20,
+  'pi-node-alt': 10,
+  'pi-special': 5
 };
 
 // Get a random symbol based on weights
@@ -41,7 +34,7 @@ export const getRandomSymbol = (): SymbolType => {
     random -= weights[i];
   }
   
-  return 'donut-white'; // Default fallback
+  return 'pi-logo'; // Default fallback
 };
 
 // Generate a grid of random symbols
@@ -61,8 +54,8 @@ export const generateGrid = (): SymbolType[][] => {
 
 // Check if symbols match, accounting for wilds
 const symbolsMatch = (symbol1: SymbolType, symbol2: SymbolType): boolean => {
-  if (symbol1 === 'special-wild' || symbol2 === 'special-wild') {
-    return true;
+  if (symbol1 === 'pi-314-alt' || symbol2 === 'pi-314-alt') {
+    return true; // Pi-314-alt is wild
   }
   return symbol1 === symbol2;
 };
@@ -74,14 +67,14 @@ const getLineSymbols = (grid: SymbolType[][], line: number[]): SymbolType[] => {
 
 // Calculate win for a specific line
 const calculateLineWin = (lineSymbols: SymbolType[], bet: number): number => {
-  // Special case: 5 jackpot symbols = jackpot win
-  if (lineSymbols.every(symbol => symbol === 'special-jackpot')) {
+  // Special case: 3 pi-special symbols = jackpot win
+  if (lineSymbols.every(symbol => symbol === 'pi-special')) {
     return -1; // Special code for jackpot win
   }
   
-  // Special case: 5 wild symbols = 5000x bet
-  if (lineSymbols.every(symbol => symbol === 'special-wild')) {
-    return bet * 5000;
+  // Special case: 3 wild symbols = 100x bet
+  if (lineSymbols.every(symbol => symbol === 'pi-314-alt')) {
+    return bet * 100;
   }
   
   // Count consecutive matching symbols from left
@@ -89,26 +82,17 @@ const calculateLineWin = (lineSymbols: SymbolType[], bet: number): number => {
   const firstSymbol = lineSymbols[0];
   
   for (let i = 1; i < lineSymbols.length; i++) {
-    if (symbolsMatch(firstSymbol, lineSymbols[i]) || lineSymbols[i] === 'special-wild') {
+    if (symbolsMatch(firstSymbol, lineSymbols[i]) || lineSymbols[i] === 'pi-314-alt') {
       count++;
     } else {
       break;
     }
   }
   
-  // Calculate win based on symbol value and count
+  // For 3x3 grid, we need all 3 symbols to match for a win
   if (count >= 3) {
-    const symbolValue = getSymbolById(firstSymbol === 'special-wild' ? lineSymbols.find(s => s !== 'special-wild') || 'donut-white' : firstSymbol).value;
-    let multiplier = 0;
-    
-    switch (count) {
-      case 3: multiplier = 3; break;
-      case 4: multiplier = 10; break;
-      case 5: multiplier = 50; break;
-      default: multiplier = 0;
-    }
-    
-    return bet * multiplier * (symbolValue / 10);
+    const symbolValue = getSymbolById(firstSymbol === 'pi-314-alt' ? lineSymbols.find(s => s !== 'pi-314-alt') || 'pi-logo' : firstSymbol).value;
+    return bet * symbolValue * (1 - HOUSE_EDGE); // Apply house edge to wins
   }
   
   return 0;
@@ -116,54 +100,42 @@ const calculateLineWin = (lineSymbols: SymbolType[], bet: number): number => {
 
 // Check for scatter symbols and calculate free spins
 const checkForFreeSpins = (grid: SymbolType[][]): number => {
-  let scatterCount = 0;
-  let freeSpinCount = 0;
+  let nodeAltCount = 0;
   
-  // Count scatter and free spin symbols
+  // Count node-alt symbols (scatter)
   grid.forEach(row => {
     row.forEach(symbol => {
-      if (symbol === 'special-scatter') scatterCount++;
-      if (symbol === 'special-free-spin') freeSpinCount++;
+      if (symbol === 'pi-node-alt') nodeAltCount++;
     });
   });
   
   // 3 or more scatters trigger free spins
-  if (scatterCount >= 3) {
-    return 10;
+  if (nodeAltCount >= 3) {
+    return 5;
   }
   
-  // Direct free spin symbols
-  if (freeSpinCount >= 3) {
-    return 5 * freeSpinCount;
+  // 2 scatters give 1 free spin
+  if (nodeAltCount === 2) {
+    return 1;
   }
   
   return 0;
 };
 
-// Check if bonus round should be triggered
-const checkForBonus = (grid: SymbolType[][]): boolean => {
-  let bonusCount = 0;
-  
-  grid.forEach(row => {
-    row.forEach(symbol => {
-      if (symbol === 'special-bonus') bonusCount++;
-    });
-  });
-  
-  return bonusCount >= 3;
-};
-
 // Check if jackpot should be won
 const checkForJackpot = (grid: SymbolType[][]): boolean => {
-  let jackpotCount = 0;
+  // Check if any row has three pi-special symbols
+  // Already checked in calculateLineWin for pay lines, but check for non-payline configurations
+  
+  let specialCount = 0;
   
   grid.forEach(row => {
     row.forEach(symbol => {
-      if (symbol === 'special-jackpot') jackpotCount++;
+      if (symbol === 'pi-special') specialCount++;
     });
   });
   
-  return jackpotCount >= 5;
+  return specialCount >= 3;
 };
 
 // Evaluate all winning lines and calculate total win
@@ -197,7 +169,6 @@ export const evaluateSpin = (
   });
   
   const freeSpinsCount = checkForFreeSpins(grid);
-  const isBonus = checkForBonus(grid);
   
   // If no regular line wins triggered jackpot, check overall grid
   if (!isJackpot) {
@@ -211,11 +182,14 @@ export const evaluateSpin = (
     isJackpot,
     isFreeSpins: freeSpinsCount > 0,
     freeSpinsCount,
-    isBonus
+    isBonus: false // Removed bonus feature for simplicity
   };
 };
 
 // Format number with commas
 export const formatNumber = (num: number): string => {
-  return num.toLocaleString();
+  return num.toLocaleString(undefined, {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  });
 };

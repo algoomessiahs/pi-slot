@@ -21,6 +21,7 @@ const SlotReel: React.FC<SlotReelProps> = ({
   const [reelSymbols, setReelSymbols] = useState(symbols);
   const [shouldHighlight, setShouldHighlight] = useState<boolean[]>([false, false, false]);
   const [imagesLoaded, setImagesLoaded] = useState<{[key: string]: boolean}>({});
+  const [spinSpeed, setSpinSpeed] = useState(100);
   
   // Preload all symbol images on mount
   useEffect(() => {
@@ -71,6 +72,7 @@ const SlotReel: React.FC<SlotReelProps> = ({
       // Delay the start of animation for each reel
       const startDelay = setTimeout(() => {
         setIsAnimating(true);
+        setSpinSpeed(100); // Reset to fast speed
         playSoundIfEnabled('spin', 0.3);
       }, delay);
       
@@ -81,15 +83,28 @@ const SlotReel: React.FC<SlotReelProps> = ({
   // Stop spinning animation and set final symbols
   useEffect(() => {
     if (!isSpinning && isAnimating) {
-      // Delay the stop of animation for each reel
-      const stopDelay = setTimeout(() => {
-        setIsAnimating(false);
-        setReelSymbols(symbols);
-      }, delay + 500); // Add additional delay for stop animation
+      // Gradually slow down before stopping
+      const slowDownInterval = setInterval(() => {
+        setSpinSpeed(prev => {
+          const newSpeed = prev + 20;
+          if (newSpeed > 300) {
+            clearInterval(slowDownInterval);
+            
+            // Stop after slowing down
+            setTimeout(() => {
+              setIsAnimating(false);
+              setReelSymbols(symbols);
+            }, 300);
+          }
+          return newSpeed;
+        });
+      }, 100);
       
-      return () => clearTimeout(stopDelay);
+      return () => {
+        clearInterval(slowDownInterval);
+      };
     }
-  }, [isSpinning, isAnimating, symbols, delay]);
+  }, [isSpinning, isAnimating, symbols]);
   
   // Generate random symbols during spinning
   useEffect(() => {
@@ -104,29 +119,61 @@ const SlotReel: React.FC<SlotReelProps> = ({
             return SYMBOLS[randomIndex].id;
           });
         });
-      }, 100); // Update symbols rapidly during spin
+      }, spinSpeed); // Use dynamic speed value
     }
     
     return () => {
       if (intervalId) clearInterval(intervalId);
     };
-  }, [isAnimating]);
+  }, [isAnimating, spinSpeed]);
   
   const getSymbolImage = (symbolId: string) => {
     try {
       const symbol = getSymbolById(symbolId);
-      return (
-        <img 
-          src={symbol.image} 
-          alt={symbol.name}
-          className="slot-symbol"
-          title={symbol.name}
-          onError={(e) => {
-            console.error(`Error loading image for symbol ${symbolId} from ${symbol.image}`);
-            e.currentTarget.src = '/assets/images/symbols/default.png'; // Fallback image
-          }}
-        />
-      );
+      
+      if (symbol.cropPosition) {
+        return (
+          <div 
+            className="slot-symbol-container"
+            style={{
+              width: '100%',
+              height: '100%',
+              overflow: 'hidden',
+              position: 'relative',
+            }}
+          >
+            <img 
+              src={symbol.image} 
+              alt={symbol.name}
+              className="absolute w-full"
+              title={symbol.name}
+              style={{
+                top: `-${symbol.cropPosition.top}%`,
+                clipPath: `inset(${symbol.cropPosition.top}% 0 ${100 - symbol.cropPosition.top - symbol.cropPosition.height}% 0)`,
+                transform: 'scale(1.1)', // Slightly larger to avoid borders
+              }}
+              onError={(e) => {
+                console.error(`Error loading image for symbol ${symbolId} from ${symbol.image}`);
+                e.currentTarget.src = '/assets/images/symbols/default.png'; // Fallback image
+              }}
+            />
+          </div>
+        );
+      } else {
+        // Fallback to original implementation if no crop position
+        return (
+          <img 
+            src={symbol.image} 
+            alt={symbol.name}
+            className="slot-symbol"
+            title={symbol.name}
+            onError={(e) => {
+              console.error(`Error loading image for symbol ${symbolId} from ${symbol.image}`);
+              e.currentTarget.src = '/assets/images/symbols/default.png'; // Fallback image
+            }}
+          />
+        );
+      }
     } catch (error) {
       console.error(`Error getting symbol by id: ${symbolId}`, error);
       return <div className="slot-symbol bg-gray-200 flex items-center justify-center">?</div>;
@@ -144,7 +191,7 @@ const SlotReel: React.FC<SlotReelProps> = ({
             ${shouldHighlight[index] ? 'slot-highlight pulse-highlight' : ''}
           `}
         >
-          <div className="p-2 flex items-center justify-center">
+          <div className="p-2 flex items-center justify-center w-full h-full">
             {getSymbolImage(symbol)}
           </div>
         </div>

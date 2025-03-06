@@ -6,8 +6,7 @@ import { SymbolType } from "../types/game";
 import SlotReel from "./SlotReel";
 import GameControls from "./GameControls";
 import WinDisplay from "./WinDisplay";
-import { toast } from "sonner";
-import { Coins, FolderCog, RefreshCcw, Trophy } from "lucide-react";
+import { Trophy } from "lucide-react";
 import { Dialog } from "@/components/ui/dialog";
 import AboutModal from "./modals/AboutModal";
 import SettingsModal from "./modals/SettingsModal";
@@ -72,7 +71,7 @@ const SlotMachine: React.FC = () => {
           const positions: {[key: number]: number[]} = {};
           
           line.positions.forEach((pos, idx) => {
-            const col = Math.floor(idx % 5);
+            const col = Math.floor(idx % 3); // Changed from 5 to 3
             const row = Math.floor(pos % 3);
             
             if (!positions[col]) {
@@ -98,9 +97,9 @@ const SlotMachine: React.FC = () => {
     }
   }, [state.isSpinning, state.lastResult, paylineIndex]);
   
-  // Create initial grid with empty slots
+  // Create initial grid with empty slots (3x3)
   const initialGrid: SymbolType[][] = Array(3).fill(null).map(() => 
-    Array(5).fill('donut-white')
+    Array(3).fill('pi-logo') // Changed from 5 to 3 columns
   );
   
   // Use the last result if available, otherwise use initial grid
@@ -165,8 +164,8 @@ const SlotMachine: React.FC = () => {
         )}
         
         {/* Game grid - Made the top part transparent */}
-        <div className="game-grid grid grid-cols-5 gap-2 mb-4 overflow-hidden rounded-xl bg-gradient-to-b from-transparent to-white/20 backdrop-blur-sm p-3 border border-white/30">
-          {Array(5).fill(null).map((_, colIndex) => (
+        <div className="game-grid grid grid-cols-3 gap-2 mb-4 overflow-hidden rounded-xl bg-gradient-to-b from-transparent to-white/20 backdrop-blur-sm p-3 border border-white/30">
+          {Array(3).fill(null).map((_, colIndex) => (
             <SlotReel 
               key={colIndex} 
               symbols={displayGrid.map(row => row[colIndex])} 
@@ -216,7 +215,6 @@ const SlotMachine: React.FC = () => {
         {/* Free spins display */}
         {state.freeSpinsRemaining > 0 && (
           <div className="absolute top-4 right-4 bg-gradient-to-r from-amber-400 to-amber-500 px-4 py-2 rounded-full text-white font-bold shadow-lg animate-pulse">
-            <RefreshCcw className="inline-block mr-1" size={16} />
             Free Spins: {state.freeSpinsRemaining}
           </div>
         )}

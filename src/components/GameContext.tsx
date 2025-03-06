@@ -15,18 +15,23 @@ interface GameContextType {
 
 // Initial game state
 const initialState: GameState = {
-  balance: 10000, // Start with 10,000 Pi
-  bet: 100,
-  lines: 5,
-  jackpot: 1000000,
+  balance: 100, // Start with 100 Pi
+  bet: 1, // Default bet is 1 Pi
+  lines: 3, // Default to 3 lines (out of 8)
+  jackpot: 100, // Start jackpot at 100 Pi
   isSpinning: false,
   lastWin: 0,
-  totalBet: 500, // bet * lines
+  totalBet: 3, // bet * lines
   lastResult: null,
   autoPlay: false,
   freeSpinsRemaining: 0,
   inFreeSpinMode: false,
 };
+
+// Bet limits
+const MIN_BET = 0.5; // Min bet of 0.5 Pi
+const MAX_BET = 10; // Max bet of 10 Pi
+const JACKPOT_CONTRIBUTION = 0.05; // 5% of bet goes to jackpot
 
 // Action types
 type Action =
@@ -65,7 +70,7 @@ const gameReducer = (state: GameState, action: Action): GameState => {
       return {
         ...state,
         balance: state.balance - totalBet,
-        jackpot: state.jackpot + Math.floor(totalBet * 0.1), // 10% of bet goes to jackpot
+        jackpot: state.jackpot + Math.floor(totalBet * JACKPOT_CONTRIBUTION * 100) / 100, // 5% of bet goes to jackpot
         isSpinning: true,
         totalBet,
         lastWin: 0,
@@ -93,7 +98,7 @@ const gameReducer = (state: GameState, action: Action): GameState => {
       } 
       // Handle regular win
       else if (action.result.totalWin > 0) {
-        toast.success(`You won ${action.result.totalWin} Pi!`);
+        toast.success(`You won ${action.result.totalWin.toFixed(2)} Pi!`);
         
         newState = {
           ...newState,
@@ -116,8 +121,8 @@ const gameReducer = (state: GameState, action: Action): GameState => {
       return newState;
     
     case 'UPDATE_BET':
-      // Ensure bet is within acceptable range (10-500)
-      const newBet = Math.max(10, Math.min(500, action.amount));
+      // Ensure bet is within acceptable range (MIN_BET-MAX_BET)
+      const newBet = Math.max(MIN_BET, Math.min(MAX_BET, action.amount));
       return {
         ...state,
         bet: newBet,
@@ -125,8 +130,8 @@ const gameReducer = (state: GameState, action: Action): GameState => {
       };
     
     case 'UPDATE_LINES':
-      // Ensure lines is within acceptable range (1-20)
-      const newLines = Math.max(1, Math.min(20, action.lines));
+      // Ensure lines is within acceptable range (1-8)
+      const newLines = Math.max(1, Math.min(8, action.lines));
       return {
         ...state,
         lines: newLines,
