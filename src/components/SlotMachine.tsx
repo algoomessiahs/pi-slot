@@ -112,7 +112,7 @@ const SlotMachine: React.FC = () => {
   };
   
   return (
-    <div className="slot-machine-container flex flex-col items-center justify-center min-h-[100vh] py-4 px-4 relative">
+    <div className="slot-machine-container compact-ui">
       <div className="absolute top-0 left-0 w-full h-full overflow-hidden -z-10">
         <div className="absolute top-0 left-0 w-full h-full bg-pi-pattern bg-repeat opacity-10"></div>
         <div className="absolute top-[15%] -left-[10%] w-[300px] h-[300px] bg-[#9b87f5] rounded-full blur-[150px] opacity-20"></div>
@@ -120,7 +120,7 @@ const SlotMachine: React.FC = () => {
         <div className="absolute -bottom-[10%] left-[20%] w-[400px] h-[400px] bg-[#FFDB58] rounded-full blur-[200px] opacity-20"></div>
       </div>
       
-      <div className="candy-panel w-full max-w-md relative">
+      <div className="candy-panel compact-panel relative">
         <MainMenu 
           onOpenSettings={() => {
             playSoundIfEnabled('buttonClick');
@@ -136,27 +136,27 @@ const SlotMachine: React.FC = () => {
           }}
         />
         
-        <div className="jackpot-panel mb-4 relative bg-gradient-to-r from-purple-900/80 to-purple-900/80 backdrop-blur-sm border-2 border-[#FDCC0D] rounded-xl shadow-[0_0_10px_rgba(253,204,13,0.6)] overflow-hidden">
+        <div className="jackpot-panel mb-2 relative bg-gradient-to-r from-purple-900/80 to-purple-900/80 backdrop-blur-sm border-2 border-[#FDCC0D] rounded-xl shadow-[0_0_10px_rgba(253,204,13,0.6)] overflow-hidden">
           <div className="absolute inset-0 bg-[url('/assets/images/pi-pattern.png')] opacity-5"></div>
-          <div className="relative py-2">
-            <div className="flex items-center justify-center space-x-3">
-              <Trophy size={24} className="text-[#FDCC0D]" />
-              <h2 className="text-xl md:text-2xl font-bold text-white">JACKPOT</h2>
+          <div className="relative py-1.5">
+            <div className="flex items-center justify-center space-x-2">
+              <Trophy size={20} className="text-[#FDCC0D]" />
+              <h2 className="text-lg md:text-xl font-bold text-white">JACKPOT</h2>
             </div>
-            <div className="jackpot-counter text-center text-2xl md:text-3xl py-1">π {formatNumber(state.jackpot)}</div>
+            <div className="jackpot-counter text-center text-xl md:text-2xl py-0.5">π {formatNumber(state.jackpot)}</div>
           </div>
         </div>
         
         {activePayline !== null && (
           <div 
-            className="payline-indicator flex items-center justify-center mb-2 py-1 font-medium animate-pulse"
+            className="payline-indicator flex items-center justify-center mb-1 py-1 font-medium animate-pulse"
             style={{ color: getPaylineColor() }}
           >
             Winning Line #{activePayline}
           </div>
         )}
         
-        <div className="game-grid grid grid-cols-3 gap-2 mb-4 overflow-hidden rounded-xl bg-gradient-to-b from-transparent to-white/20 backdrop-blur-sm p-3 border border-white/30">
+        <div className="game-grid grid grid-cols-3 gap-2 mb-2 overflow-hidden rounded-xl bg-gradient-to-b from-transparent to-white/20 backdrop-blur-sm p-2 border border-white/30">
           {Array(3).fill(null).map((_, colIndex) => (
             <SlotReel 
               key={colIndex} 
@@ -170,34 +170,41 @@ const SlotMachine: React.FC = () => {
         
         {(state.lastWin > 0 || showWinAnimation) && <WinDisplay winAmount={state.lastWin} />}
         
-        <div className="mt-4 grid grid-cols-3 gap-2 text-center mb-4">
+        <div className="grid grid-cols-3 gap-2 text-center mb-2">
           <div className="bg-white/30 backdrop-blur-sm rounded-xl p-2 shadow-sm">
-            <div className="text-sm font-semibold mb-1">BALANCE</div>
-            <div className="flex items-center justify-center">
+            <div className="text-xs font-semibold">BALANCE</div>
+            <div className="flex items-center justify-center text-sm">
               <span className="pi-coin">π</span>
               <span className="font-bold">{formatNumber(state.balance)}</span>
             </div>
           </div>
           
           <div className="bg-white/30 backdrop-blur-sm rounded-xl p-2 shadow-sm">
-            <div className="text-sm font-semibold mb-1">TOTAL BET</div>
-            <div className="flex items-center justify-center">
+            <div className="text-xs font-semibold">TOTAL BET</div>
+            <div className="flex items-center justify-center text-sm">
               <span className="pi-coin">π</span>
               <span className="font-bold">{formatNumber(state.totalBet)}</span>
             </div>
           </div>
           
           <div className="bg-white/30 backdrop-blur-sm rounded-xl p-2 shadow-sm">
-            <div className="text-sm font-semibold mb-1">WIN</div>
-            <div className="flex items-center justify-center">
+            <div className="text-xs font-semibold">WIN</div>
+            <div className="flex items-center justify-center text-sm">
               <span className="pi-coin">π</span>
               <span className="font-bold">{formatNumber(state.lastWin)}</span>
             </div>
           </div>
         </div>
         
+        <GameControls 
+          onOpenPayTable={() => {
+            playSoundIfEnabled('buttonClick');
+            setShowPayTable(true);
+          }} 
+        />
+        
         <button 
-          className="candy-button w-full py-4 text-xl mb-2 z-10 relative"
+          className="candy-button w-full py-3 text-xl mt-2 z-10 relative"
           onClick={handleSpin}
           disabled={state.isSpinning || state.balance < state.totalBet}
         >
@@ -205,7 +212,7 @@ const SlotMachine: React.FC = () => {
         </button>
         
         {state.freeSpinsRemaining > 0 && (
-          <div className="absolute top-4 right-4 bg-gradient-to-r from-amber-400 to-amber-500 px-4 py-2 rounded-full text-white font-bold shadow-lg animate-pulse">
+          <div className="absolute top-4 right-4 bg-gradient-to-r from-amber-400 to-amber-500 px-3 py-1 rounded-full text-white font-bold shadow-lg animate-pulse text-sm">
             Free Spins: {state.freeSpinsRemaining}
           </div>
         )}

@@ -1,5 +1,5 @@
 
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { SymbolType } from "../types/game";
 import { SYMBOLS, getSymbolById } from "../data/symbols";
 import { playSoundIfEnabled } from "../utils/soundUtils";
@@ -20,36 +20,9 @@ const SlotReel: React.FC<SlotReelProps> = ({
   const [isAnimating, setIsAnimating] = useState(false);
   const [reelSymbols, setReelSymbols] = useState(symbols);
   const [shouldHighlight, setShouldHighlight] = useState<boolean[]>([false, false, false]);
-  const [imagesLoaded, setImagesLoaded] = useState<{[key: string]: boolean}>({});
-  const [spinSpeed, setSpinSpeed] = useState(80);
-  
-  // Preload all symbol images on mount
-  useEffect(() => {
-    const preloadImages = async () => {
-      console.log("Preloading symbol images...");
-      
-      const loadPromises = SYMBOLS.map((symbol) => {
-        return new Promise<void>((resolve) => {
-          const img = new Image();
-          img.src = symbol.image;
-          img.onload = () => {
-            setImagesLoaded(prev => ({ ...prev, [symbol.id]: true }));
-            console.log(`Loaded symbol image: ${symbol.id}`);
-            resolve();
-          };
-          img.onerror = () => {
-            console.error(`Failed to load symbol image: ${symbol.id} from ${symbol.image}`);
-            resolve();
-          };
-        });
-      });
-      
-      await Promise.all(loadPromises);
-      console.log("All symbol images preloaded");
-    };
-    
-    preloadImages();
-  }, []);
+  const [spinSpeed, setSpinSpeed] = useState(100);
+  const [isBlurred, setIsBlurred] = useState(false);
+  const reelRef = useRef<HTMLDivElement>(null);
   
   // Process highlight positions
   useEffect(() => {
@@ -72,7 +45,8 @@ const SlotReel: React.FC<SlotReelProps> = ({
       // Delay the start of animation for each reel
       const startDelay = setTimeout(() => {
         setIsAnimating(true);
-        setSpinSpeed(80); // Reset to fast speed
+        setSpinSpeed(100); // Reset to fast speed
+        setIsBlurred(true);
         playSoundIfEnabled('spin', 0.3);
       }, delay);
       
@@ -87,14 +61,15 @@ const SlotReel: React.FC<SlotReelProps> = ({
       const slowDownInterval = setInterval(() => {
         setSpinSpeed(prev => {
           const newSpeed = prev + 20;
-          if (newSpeed > 300) {
+          if (newSpeed > 200) {
             clearInterval(slowDownInterval);
             
             // Stop after slowing down
             setTimeout(() => {
               setIsAnimating(false);
+              setIsBlurred(false);
               setReelSymbols(symbols);
-            }, 300);
+            }, 200);
           }
           return newSpeed;
         });
@@ -136,7 +111,7 @@ const SlotReel: React.FC<SlotReelProps> = ({
           <img 
             src={symbol.image} 
             alt={symbol.name}
-            className="max-w-full max-h-full object-contain"
+            className={`max-w-full max-h-full object-contain p-2 ${isBlurred ? 'slot-blur' : ''}`}
             title={symbol.name}
             onError={(e) => {
               console.error(`Error loading image for symbol ${symbolId} from ${symbol.image}`);
@@ -152,19 +127,17 @@ const SlotReel: React.FC<SlotReelProps> = ({
   };
   
   return (
-    <div className="flex flex-col gap-2">
+    <div className="flex flex-col gap-2" ref={reelRef}>
       {reelSymbols.map((symbol, index) => (
         <div 
           key={index} 
           className={`
             slot-container flex items-center justify-center 
             ${isAnimating ? 'animate-slot-spin' : ''} 
-            ${shouldHighlight[index] ? 'slot-highlight pulse-highlight' : ''}
+            ${!isSpinning && !isAnimating && shouldHighlight[index] ? 'slot-highlight pulse-highlight' : ''}
           `}
         >
-          <div className="p-2 flex items-center justify-center w-full h-full">
-            {getSymbolImage(symbol)}
-          </div>
+          {getSymbolImage(symbol)}
         </div>
       ))}
     </div>

@@ -41,6 +41,7 @@ body {
 
 .slot-machine-container {
   background-image: radial-gradient(circle at top center, rgba(155, 135, 245, 0.15) 0%, rgba(30, 27, 75, 0.1) 70%);
+  @apply flex flex-col items-center justify-start min-h-screen pt-4 pb-4 px-4 relative overflow-hidden;
 }
 
 /* Control buttons */
@@ -73,30 +74,47 @@ body {
   @apply object-contain w-full h-full p-2;
 }
 
-/* Slot spin animation */
+/* Enhanced Slot spin animation */
 @keyframes slot-spin {
   0% {
-    transform: translateY(-5px);
-    filter: blur(0px);
-  }
-  25% {
-    filter: blur(1px);
-  }
-  50% {
-    transform: translateY(5px);
-    filter: blur(2px);
-  }
-  75% {
-    filter: blur(1px);
+    transform: translateY(0);
   }
   100% {
-    transform: translateY(-5px);
-    filter: blur(0px);
+    transform: translateY(-100%);
   }
 }
 
 .animate-slot-spin {
-  animation: slot-spin 0.2s linear infinite;
+  animation: slot-spin 0.5s linear infinite;
+}
+
+/* Smooth stop animation */
+@keyframes slot-stop {
+  0% {
+    transform: translateY(-100%);
+  }
+  25% {
+    transform: translateY(-90%);
+  }
+  50% {
+    transform: translateY(-100%);
+  }
+  75% {
+    transform: translateY(-95%);
+  }
+  100% {
+    transform: translateY(-100%);
+  }
+}
+
+.animate-slot-stop {
+  animation: slot-stop 0.3s ease-out forwards;
+}
+
+/* Slot blur effect during spin */
+.slot-blur {
+  filter: blur(2px);
+  transition: filter 0.3s ease;
 }
 
 /* Slot highlight effect */
@@ -173,10 +191,41 @@ body {
   animation: coins-rain 3s linear forwards;
 }
 
+/* Shine animation for winning symbols */
+@keyframes shine {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+.animate-shine {
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.6), transparent);
+  background-size: 200% 100%;
+  animation: shine 1.5s linear infinite;
+}
+
 /* Background pattern */
 .bg-pi-pattern {
   background-image: url('/assets/images/pi-pattern.png');
   background-size: 100px 100px;
+}
+
+/* Glow effect for important elements */
+@keyframes glow {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+.animate-glow {
+  animation: glow 2s ease-in-out infinite;
+}
+
+/* Make slot UI more compact to fit in viewport */
+.compact-ui {
+  @apply max-h-screen overflow-hidden;
+}
+
+.compact-panel {
+  @apply max-w-md mx-auto;
 }
 
 /* Responsive adjustments */
