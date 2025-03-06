@@ -4,7 +4,7 @@ import { SYMBOLS, PAY_LINES, getSymbolById, HOUSE_EDGE } from "../data/symbols";
 
 // Constants for grid size
 const ROWS = 3;
-const COLS = 3; // Changed from 5 to 3
+const COLS = 3; // 3x3 grid
 
 // Probability weights for different symbols
 const SYMBOL_WEIGHTS: Record<string, number> = {

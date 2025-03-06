@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import { useGame } from "./GameContext";
 import { formatNumber } from "../utils/gameLogic";
@@ -25,7 +24,6 @@ const SlotMachine: React.FC = () => {
   const [activePayline, setActivePayline] = useState<number | null>(null);
   const [paylineIndex, setPaylineIndex] = useState(0);
   
-  // Initialize audio system on first user interaction
   useEffect(() => {
     const handleInteraction = () => {
       console.log("User interaction detected, initializing audio");
@@ -41,12 +39,10 @@ const SlotMachine: React.FC = () => {
     };
   }, []);
   
-  // Create an effect that triggers win animation when a win occurs
   useEffect(() => {
     if (state.lastWin > 0) {
       setShowWinAnimation(true);
       
-      // Clear win animation after 3 seconds
       const timer = setTimeout(() => {
         setShowWinAnimation(false);
       }, 3000);
@@ -55,23 +51,19 @@ const SlotMachine: React.FC = () => {
     }
   }, [state.lastWin]);
   
-  // Handle payline visualization
   useEffect(() => {
-    // Only show paylines when not spinning and there are win lines
     if (!state.isSpinning && state.lastResult?.winLines.length) {
       const winLines = state.lastResult.winLines;
       
-      // Start cycling through win lines
       const interval = setInterval(() => {
         if (winLines.length > 0) {
           const idx = paylineIndex % winLines.length;
           const line = winLines[idx];
           
-          // Create highlighted positions for each reel
           const positions: {[key: number]: number[]} = {};
           
           line.positions.forEach((pos, idx) => {
-            const col = Math.floor(idx % 3); // Changed from 5 to 3
+            const col = Math.floor(idx % 3);
             const row = Math.floor(pos % 3);
             
             if (!positions[col]) {
@@ -91,21 +83,17 @@ const SlotMachine: React.FC = () => {
         clearInterval(interval);
       };
     } else {
-      // Clear all highlights when spinning
       setHighlightedPositions({});
       setActivePayline(null);
     }
   }, [state.isSpinning, state.lastResult, paylineIndex]);
   
-  // Create initial grid with empty slots (3x3)
   const initialGrid: SymbolType[][] = Array(3).fill(null).map(() => 
-    Array(3).fill('pi-logo') // Changed from 5 to 3 columns
+    Array(3).fill('pi-logo')
   );
   
-  // Use the last result if available, otherwise use initial grid
   const displayGrid = state.lastResult?.grid || initialGrid;
   
-  // Get payline color based on active payline
   const getPaylineColor = () => {
     if (activePayline !== null && activePayline > 0 && activePayline <= PAYLINE_COLORS.length) {
       return PAYLINE_COLORS[activePayline - 1];
@@ -115,7 +103,6 @@ const SlotMachine: React.FC = () => {
   
   return (
     <div className="slot-machine-container flex flex-col items-center justify-center min-h-screen py-6 px-4 relative">
-      {/* Background elements */}
       <div className="absolute top-0 left-0 w-full h-full overflow-hidden -z-10">
         <div className="absolute top-0 left-0 w-full h-full bg-pi-pattern bg-repeat opacity-10"></div>
         <div className="absolute top-[15%] -left-[10%] w-[300px] h-[300px] bg-[#9b87f5] rounded-full blur-[150px] opacity-20"></div>
@@ -123,9 +110,7 @@ const SlotMachine: React.FC = () => {
         <div className="absolute -bottom-[10%] left-[20%] w-[400px] h-[400px] bg-[#FFDB58] rounded-full blur-[200px] opacity-20"></div>
       </div>
       
-      {/* Main container */}
       <div className="candy-panel w-full max-w-4xl relative">
-        {/* Menu Button */}
         <MainMenu 
           onOpenSettings={() => {
             playSoundIfEnabled('buttonClick');
@@ -141,7 +126,6 @@ const SlotMachine: React.FC = () => {
           }}
         />
         
-        {/* Jackpot display - Improved and made more visible */}
         <div className="jackpot-panel mb-4 relative bg-gradient-to-r from-purple-900/80 to-purple-900/80 backdrop-blur-sm border-2 border-[#FDCC0D] rounded-xl shadow-[0_0_10px_rgba(253,204,13,0.6)] overflow-hidden">
           <div className="absolute inset-0 bg-[url('/assets/images/pi-pattern.png')] opacity-5"></div>
           <div className="relative py-2">
@@ -153,7 +137,6 @@ const SlotMachine: React.FC = () => {
           </div>
         </div>
         
-        {/* Active payline indicator */}
         {activePayline !== null && (
           <div 
             className="payline-indicator flex items-center justify-center mb-2 py-1 font-medium animate-pulse"
@@ -163,29 +146,25 @@ const SlotMachine: React.FC = () => {
           </div>
         )}
         
-        {/* Game grid - Made the top part transparent */}
         <div className="game-grid grid grid-cols-3 gap-2 mb-4 overflow-hidden rounded-xl bg-gradient-to-b from-transparent to-white/20 backdrop-blur-sm p-3 border border-white/30">
           {Array(3).fill(null).map((_, colIndex) => (
             <SlotReel 
               key={colIndex} 
               symbols={displayGrid.map(row => row[colIndex])} 
               isSpinning={state.isSpinning} 
-              delay={colIndex * 200} // Stagger the spin stops
+              delay={colIndex * 200}
               highlightPositions={highlightedPositions[colIndex] || []}
             />
           ))}
         </div>
         
-        {/* Win display */}
         {(state.lastWin > 0 || showWinAnimation) && <WinDisplay winAmount={state.lastWin} />}
         
-        {/* Game controls */}
         <GameControls onOpenPayTable={() => {
           playSoundIfEnabled('buttonClick');
           setShowPayTable(true);
         }} />
         
-        {/* Bottom info bar */}
         <div className="mt-4 grid grid-cols-2 md:grid-cols-3 gap-2 text-center">
           <div className="bg-white/30 backdrop-blur-sm rounded-xl p-2 shadow-sm">
             <div className="text-sm font-semibold mb-1">BALANCE</div>
@@ -212,7 +191,6 @@ const SlotMachine: React.FC = () => {
           </div>
         </div>
         
-        {/* Free spins display */}
         {state.freeSpinsRemaining > 0 && (
           <div className="absolute top-4 right-4 bg-gradient-to-r from-amber-400 to-amber-500 px-4 py-2 rounded-full text-white font-bold shadow-lg animate-pulse">
             Free Spins: {state.freeSpinsRemaining}
@@ -220,7 +198,6 @@ const SlotMachine: React.FC = () => {
         )}
       </div>
       
-      {/* Modals */}
       <AboutModal open={showAbout} onOpenChange={setShowAbout} />
       <SettingsModal open={showSettings} onOpenChange={setShowSettings} />
       <PayTable open={showPayTable} onOpenChange={setShowPayTable} />
