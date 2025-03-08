@@ -5,7 +5,7 @@ export const SYMBOLS: Symbol[] = [
   {
     id: 'pi-logo',
     name: 'Pi Logo',
-    image: '/assets/images/symbols/pi-symbol.png',
+    image: '/assets/images/symbols/banana.png',
     value: 50,
     isSpecial: false,
     cropPosition: { top: 0, height: 100 }
@@ -13,7 +13,7 @@ export const SYMBOLS: Symbol[] = [
   {
     id: 'pi-symbol',
     name: 'Pi Symbol',
-    image: '/assets/images/symbols/pi-symbol.png',
+    image: '/assets/images/symbols/bar.png',
     value: 40,
     isSpecial: false,
     cropPosition: { top: 0, height: 100 }
@@ -21,7 +21,7 @@ export const SYMBOLS: Symbol[] = [
   {
     id: 'pi-314',
     name: '3.14',
-    image: '/assets/images/symbols/3.14.png',
+    image: '/assets/images/symbols/bell.png',
     value: 30,
     isSpecial: false,
     cropPosition: { top: 0, height: 100 }
@@ -29,7 +29,7 @@ export const SYMBOLS: Symbol[] = [
   {
     id: 'pi-bcv',
     name: 'BCV',
-    image: '/assets/images/symbols/gcv.png',
+    image: '/assets/images/symbols/cherry.png',
     value: 25,
     isSpecial: false,
     cropPosition: { top: 0, height: 100 }
@@ -37,7 +37,7 @@ export const SYMBOLS: Symbol[] = [
   {
     id: 'pi-node',
     name: 'Pi Node',
-    image: '/assets/images/symbols/pi-coin.png',
+    image: '/assets/images/symbols/lemon.png',
     value: 20,
     isSpecial: false,
     cropPosition: { top: 0, height: 100 }
@@ -45,7 +45,7 @@ export const SYMBOLS: Symbol[] = [
   {
     id: 'pi-314-alt',
     name: '3.14 Alt',
-    image: '/assets/images/symbols/3.14.png',
+    image: '/assets/images/symbols/melon.png',
     value: 15,
     isSpecial: true,
     cropPosition: { top: 0, height: 100 }
@@ -53,7 +53,7 @@ export const SYMBOLS: Symbol[] = [
   {
     id: 'pi-symbol-alt',
     name: 'Pi Symbol Alt',
-    image: '/assets/images/symbols/pi-symbol.png',
+    image: '/assets/images/symbols/orange.png',
     value: 10,
     isSpecial: false,
     cropPosition: { top: 0, height: 100 }
@@ -61,7 +61,7 @@ export const SYMBOLS: Symbol[] = [
   {
     id: 'pi-node-alt',
     name: 'Pi Node Alt',
-    image: '/assets/images/symbols/pi-coin.png',
+    image: '/assets/images/symbols/plum.png',
     value: 5,
     isSpecial: true,
     cropPosition: { top: 0, height: 100 }
@@ -69,7 +69,7 @@ export const SYMBOLS: Symbol[] = [
   {
     id: 'pi-special',
     name: 'Pi Special',
-    image: '/assets/images/symbols/Jackpot.png',
+    image: '/assets/images/symbols/seven.png',
     value: 100,
     isSpecial: true,
     cropPosition: { top: 0, height: 100 }

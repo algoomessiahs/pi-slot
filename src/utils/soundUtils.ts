@@ -4,7 +4,7 @@
 // Sound URLs
 const SOUNDS = {
   spin: '/assets/sounds/spin.mp3',
-  win: '/assets/sounds/win.mp3',
+  win: '/assets/sounds/big-win.mp3',
   bigWin: '/assets/sounds/big-win.mp3',
   jackpot: '/assets/sounds/jackpot.mp3',
   buttonClick: '/assets/sounds/click.mp3',
