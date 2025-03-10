@@ -53,6 +53,23 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
     dispatch({ type: 'RESET_GAME' });
   };
   
+  // Admin features
+  const toggleAdminMode = () => {
+    dispatch({ type: 'TOGGLE_ADMIN_MODE' });
+  };
+  
+  const setBalance = (amount: number) => {
+    dispatch({ type: 'SET_BALANCE', amount });
+  };
+  
+  const setFreeSpins = (count: number) => {
+    dispatch({ type: 'SET_FREE_SPINS', count });
+  };
+  
+  const setJackpot = (amount: number) => {
+    dispatch({ type: 'UPDATE_JACKPOT', amount });
+  };
+  
   // Effect for auto play
   useEffect(() => {
     let autoPlayInterval: NodeJS.Timeout | null = null;
@@ -76,7 +93,11 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
     updateBet,
     updateLines,
     toggleAutoPlay,
-    resetGame
+    resetGame,
+    toggleAdminMode,
+    setBalance,
+    setFreeSpins,
+    setJackpot
   };
   
   return (

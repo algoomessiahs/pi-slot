@@ -22,6 +22,7 @@ const SlotReel: React.FC<SlotReelProps> = ({
   const [shouldHighlight, setShouldHighlight] = useState<boolean[]>([false, false, false]);
   const [spinSpeed, setSpinSpeed] = useState(100);
   const [isBlurred, setIsBlurred] = useState(false);
+  const [spinTransition, setSpinTransition] = useState("none");
   const reelRef = useRef<HTMLDivElement>(null);
   
   // Process highlight positions
@@ -45,8 +46,9 @@ const SlotReel: React.FC<SlotReelProps> = ({
       // Delay the start of animation for each reel
       const startDelay = setTimeout(() => {
         setIsAnimating(true);
-        setSpinSpeed(100); // Reset to fast speed
+        setSpinSpeed(80); // Start with faster speed
         setIsBlurred(true);
+        setSpinTransition("all 0.1s ease-in"); // Smooth transition when starting
         playSoundIfEnabled('spin', 0.3);
       }, delay);
       
@@ -54,22 +56,31 @@ const SlotReel: React.FC<SlotReelProps> = ({
     }
   }, [isSpinning, delay]);
   
-  // Stop spinning animation and set final symbols
+  // Stop spinning animation and set final symbols with smooth transition
   useEffect(() => {
     if (!isSpinning && isAnimating) {
       // Gradually slow down before stopping
       const slowDownInterval = setInterval(() => {
         setSpinSpeed(prev => {
-          const newSpeed = prev + 20;
+          const newSpeed = prev + 40;
+          
+          // Update transition to be smoother as it slows down
           if (newSpeed > 200) {
-            clearInterval(slowDownInterval);
+            setSpinTransition("all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)"); // Bouncy effect when stopping
             
-            // Stop after slowing down
+            // Prepare for final stop with easing
             setTimeout(() => {
               setIsAnimating(false);
               setIsBlurred(false);
               setReelSymbols(symbols);
-            }, 200);
+              
+              // Reset transition after stopping
+              setTimeout(() => {
+                setSpinTransition("none");
+              }, 300);
+            }, 300);
+            
+            clearInterval(slowDownInterval);
           }
           return newSpeed;
         });
@@ -111,8 +122,9 @@ const SlotReel: React.FC<SlotReelProps> = ({
           <img 
             src={symbol.image} 
             alt={symbol.name}
-            className={`max-w-full max-h-full object-contain p-2 ${isBlurred ? 'slot-blur' : ''}`}
+            className={`max-w-full max-h-full object-contain p-2 ${isBlurred ? 'slot-blur' : ''} transition-all duration-200`}
             title={symbol.name}
+            style={{ transition: spinTransition }}
             onError={(e) => {
               console.error(`Error loading image for symbol ${symbolId} from ${symbol.image}`);
               e.currentTarget.src = '/assets/images/symbols/pi-symbol.png'; // Fallback image
@@ -136,6 +148,11 @@ const SlotReel: React.FC<SlotReelProps> = ({
             ${isAnimating ? 'animate-slot-spin' : ''} 
             ${!isSpinning && !isAnimating && shouldHighlight[index] ? 'slot-highlight pulse-highlight' : ''}
           `}
+          style={{ 
+            transformStyle: 'preserve-3d',
+            perspective: '1000px',
+            transition: spinTransition 
+          }}
         >
           {getSymbolImage(symbol)}
         </div>

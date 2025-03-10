@@ -11,4 +11,6 @@ export type GameAction =
   | { type: 'UPDATE_JACKPOT'; amount: number }
   | { type: 'RESET_GAME' }
   | { type: 'SET_FREE_SPINS'; count: number }
-  | { type: 'USE_FREE_SPIN' };
+  | { type: 'USE_FREE_SPIN' }
+  | { type: 'TOGGLE_ADMIN_MODE' } // For testing features
+  | { type: 'SET_BALANCE'; amount: number }; // For admin to set balance

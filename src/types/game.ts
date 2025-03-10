@@ -51,4 +51,6 @@ export interface GameState {
   autoPlay: boolean;
   freeSpinsRemaining: number;
   inFreeSpinMode: boolean;
+  isJackpotActive: boolean; // Whether jackpot has reached the threshold
+  adminMode: boolean; // Admin mode for testing
 }

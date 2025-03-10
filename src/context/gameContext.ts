@@ -10,6 +10,10 @@ export interface GameContextType {
   updateLines: (lines: number) => void;
   toggleAutoPlay: () => void;
   resetGame: () => void;
+  toggleAdminMode: () => void; // Admin feature
+  setBalance: (amount: number) => void; // Admin feature
+  setFreeSpins: (count: number) => void; // Admin feature
+  setJackpot: (amount: number) => void; // Admin feature
 }
 
 // Create context

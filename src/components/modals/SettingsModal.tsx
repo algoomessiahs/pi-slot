@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import { FolderCog, Volume2, VolumeX, X } from "lucide-react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Switch } from "@/components/ui/switch";
-import { useGame } from "../GameContext";
+import { useGame } from "../../context/gameContext";
 import { toggleMute, isSoundMuted, playSoundIfEnabled } from "../../utils/soundUtils";
 
 interface SettingsModalProps {

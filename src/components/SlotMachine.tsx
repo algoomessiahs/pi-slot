@@ -1,6 +1,6 @@
 
-import React, { useEffect, useState } from "react";
-import { useGame } from "./GameContext";
+import React, { useEffect, useState, useCallback } from "react";
+import { useGame } from "../context/gameContext";
 import { playSoundIfEnabled, initAudio } from "../utils/soundUtils";
 import { Dialog } from "@/components/ui/dialog";
 
@@ -18,9 +18,10 @@ import MainMenu from "./MainMenu";
 import PayTable from "./PayTable";
 import AboutModal from "./modals/AboutModal";
 import SettingsModal from "./modals/SettingsModal";
+import AdminPanel from "./AdminPanel";
 
 const SlotMachine: React.FC = () => {
-  const { state, spin } = useGame();
+  const { state, spin, toggleAdminMode } = useGame();
   const [showAbout, setShowAbout] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
   const [showPayTable, setShowPayTable] = useState(false);
@@ -28,6 +29,36 @@ const SlotMachine: React.FC = () => {
   const [highlightedPositions, setHighlightedPositions] = useState<{[key: number]: number[]}>({});
   const [activePayline, setActivePayline] = useState<number | null>(null);
   const [paylineIndex, setPaylineIndex] = useState(0);
+  const [adminKeySequence, setAdminKeySequence] = useState<string[]>([]);
+  
+  // Secret key sequence to enable admin mode: 'a', 'd', 'm', 'i', 'n'
+  const SECRET_SEQUENCE = ['a', 'd', 'm', 'i', 'n'];
+  
+  // Handle key presses for admin mode
+  const handleKeyDown = useCallback((e: KeyboardEvent) => {
+    const key = e.key.toLowerCase();
+    
+    setAdminKeySequence(prev => {
+      const newSequence = [...prev, key].slice(-SECRET_SEQUENCE.length);
+      
+      // Check if the sequence matches
+      if (newSequence.join('') === SECRET_SEQUENCE.join('')) {
+        toggleAdminMode();
+        return [];
+      }
+      
+      return newSequence;
+    });
+  }, [toggleAdminMode]);
+  
+  useEffect(() => {
+    // Add key listener for admin mode activation
+    window.addEventListener('keydown', handleKeyDown);
+    
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [handleKeyDown]);
   
   useEffect(() => {
     const handleInteraction = () => {
@@ -99,7 +130,7 @@ const SlotMachine: React.FC = () => {
 
   // Handle spin button
   const handleSpin = () => {
-    if (!state.isSpinning && state.balance >= state.totalBet) {
+    if (!state.isSpinning && (state.balance >= state.totalBet || state.freeSpinsRemaining > 0)) {
       spin();
     }
   };
@@ -107,6 +138,7 @@ const SlotMachine: React.FC = () => {
   return (
     <div className="slot-machine-container compact-ui">
       <BackgroundEffects />
+      <AdminPanel />
       
       <div className="candy-panel compact-panel relative">
         <MainMenu 
@@ -124,7 +156,10 @@ const SlotMachine: React.FC = () => {
           }}
         />
         
-        <JackpotDisplay jackpot={state.jackpot} />
+        <JackpotDisplay 
+          jackpot={state.jackpot} 
+          isActive={state.isJackpotActive} 
+        />
         
         <PaylineIndicator activePayline={activePayline} />
         
@@ -151,7 +186,7 @@ const SlotMachine: React.FC = () => {
         
         <SpinButton 
           onSpin={handleSpin} 
-          disabled={state.isSpinning || state.balance < state.totalBet} 
+          disabled={state.isSpinning || (state.balance < state.totalBet && state.freeSpinsRemaining <= 0)} 
           freeSpinsRemaining={state.freeSpinsRemaining} 
         />
         
