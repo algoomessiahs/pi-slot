@@ -2,7 +2,7 @@
 import React from "react";
 import { Separator } from "@/components/ui/separator";
 import { Sheet, SheetContent, SheetTrigger, SheetClose } from "@/components/ui/sheet";
-import { useGame } from "./GameContext";
+import { useGame } from "../context/gameContext";
 import { formatNumber } from "../utils/gameLogic";
 import { playSoundIfEnabled, toggleMute, isSoundMuted } from "../utils/soundUtils";
 import { 

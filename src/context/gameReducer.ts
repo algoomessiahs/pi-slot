@@ -1,20 +1,10 @@
 
-import React, { createContext, useContext, useReducer, useEffect } from 'react';
 import { GameState, SpinResult } from '../types/game';
-import { evaluateSpin, generateGrid } from '../utils/gameLogic';
+import { GameAction } from './gameActions';
 import { toast } from "sonner";
 
-interface GameContextType {
-  state: GameState;
-  spin: () => void;
-  updateBet: (amount: number) => void;
-  updateLines: (lines: number) => void;
-  toggleAutoPlay: () => void;
-  resetGame: () => void;
-}
-
 // Initial game state
-const initialState: GameState = {
+export const initialState: GameState = {
   balance: 100, // Start with 100 Pi
   bet: 1, // Default bet is 1 Pi
   lines: 3, // Default to 3 lines (out of 8)
@@ -29,24 +19,12 @@ const initialState: GameState = {
 };
 
 // Bet limits
-const MIN_BET = 0.5; // Min bet of 0.5 Pi
-const MAX_BET = 10; // Max bet of 10 Pi
-const JACKPOT_CONTRIBUTION = 0.05; // 5% of bet goes to jackpot
-
-// Action types
-type Action =
-  | { type: 'SPIN_START' }
-  | { type: 'SPIN_END'; result: SpinResult }
-  | { type: 'UPDATE_BET'; amount: number }
-  | { type: 'UPDATE_LINES'; lines: number }
-  | { type: 'TOGGLE_AUTO_PLAY' }
-  | { type: 'UPDATE_JACKPOT'; amount: number }
-  | { type: 'RESET_GAME' }
-  | { type: 'SET_FREE_SPINS'; count: number }
-  | { type: 'USE_FREE_SPIN' };
+export const MIN_BET = 0.5; // Min bet of 0.5 Pi
+export const MAX_BET = 10; // Max bet of 10 Pi
+export const JACKPOT_CONTRIBUTION = 0.05; // 5% of bet goes to jackpot
 
 // Reducer function
-const gameReducer = (state: GameState, action: Action): GameState => {
+export const gameReducer = (state: GameState, action: GameAction): GameState => {
   switch (action.type) {
     case 'SPIN_START':
       // No balance deduction for free spins
@@ -174,88 +152,4 @@ const gameReducer = (state: GameState, action: Action): GameState => {
     default:
       return state;
   }
-};
-
-// Create context
-const GameContext = createContext<GameContextType | undefined>(undefined);
-
-// Provider component
-export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [state, dispatch] = useReducer(gameReducer, initialState);
-  
-  // Function to spin the reels
-  const spin = () => {
-    // Prevent spinning if already spinning
-    if (state.isSpinning) return;
-    
-    // Start spin
-    dispatch({ type: 'SPIN_START' });
-    
-    // Simulate delay for spinning animation (2 seconds)
-    setTimeout(() => {
-      // Generate random grid and evaluate results
-      const grid = generateGrid();
-      const result = evaluateSpin(grid, state.bet, state.lines);
-      
-      // End spin with results
-      dispatch({ type: 'SPIN_END', result });
-      
-      // Decrement free spins if in free spin mode
-      if (state.freeSpinsRemaining > 0) {
-        dispatch({ type: 'USE_FREE_SPIN' });
-      }
-    }, 2000);
-  };
-  
-  // Function to update bet amount
-  const updateBet = (amount: number) => {
-    dispatch({ type: 'UPDATE_BET', amount });
-  };
-  
-  // Function to update number of lines
-  const updateLines = (lines: number) => {
-    dispatch({ type: 'UPDATE_LINES', lines });
-  };
-  
-  // Function to toggle auto play
-  const toggleAutoPlay = () => {
-    dispatch({ type: 'TOGGLE_AUTO_PLAY' });
-  };
-  
-  // Function to reset game
-  const resetGame = () => {
-    dispatch({ type: 'RESET_GAME' });
-  };
-  
-  // Effect for auto play
-  useEffect(() => {
-    let autoPlayInterval: NodeJS.Timeout | null = null;
-    
-    if (state.autoPlay && !state.isSpinning) {
-      autoPlayInterval = setInterval(() => {
-        spin();
-      }, 3000); // Auto spin every 3 seconds
-    }
-    
-    return () => {
-      if (autoPlayInterval) {
-        clearInterval(autoPlayInterval);
-      }
-    };
-  }, [state.autoPlay, state.isSpinning]);
-  
-  return (
-    <GameContext.Provider value={{ state, spin, updateBet, updateLines, toggleAutoPlay, resetGame }}>
-      {children}
-    </GameContext.Provider>
-  );
-};
-
-// Custom hook to use the game context
-export const useGame = (): GameContextType => {
-  const context = useContext(GameContext);
-  if (context === undefined) {
-    throw new Error('useGame must be used within a GameProvider');
-  }
-  return context;
 };

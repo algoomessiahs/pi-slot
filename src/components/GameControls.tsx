@@ -1,6 +1,6 @@
 
 import React from "react";
-import { useGame } from "./GameContext";
+import { useGame } from "../context/gameContext";
 import { formatNumber } from "../utils/gameLogic";
 import { Minus, Plus, PlayCircle, Pause, HelpCircle } from "lucide-react";
 import { playSoundIfEnabled } from "../utils/soundUtils";

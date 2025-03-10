@@ -1,7 +1,7 @@
 
 import React, { useEffect } from "react";
 import SlotMachine from "@/components/SlotMachine";
-import { GameProvider } from "@/components/GameContext";
+import { GameProvider } from "@/context/GameProvider";
 import { initAudio } from "@/utils/soundUtils";
 import { toast } from "sonner";
 import { SYMBOLS } from "@/data/symbols";
