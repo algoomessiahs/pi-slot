@@ -1,6 +1,6 @@
 
 import { createContext, useContext } from 'react';
-import { GameState } from '../types/game';
+import { GameState, WinForceType } from '../types/game';
 
 // Define the context type
 export interface GameContextType {
@@ -14,6 +14,8 @@ export interface GameContextType {
   setBalance: (amount: number) => void; // Admin feature
   setFreeSpins: (count: number) => void; // Admin feature
   setJackpot: (amount: number) => void; // Admin feature
+  forceWin: (winType: WinForceType) => void; // Admin feature
+  toggleTestMode: () => void; // Admin feature
 }
 
 // Create context

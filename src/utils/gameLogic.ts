@@ -6,17 +6,17 @@ import { SYMBOLS, PAY_LINES, getSymbolById, HOUSE_EDGE } from "../data/symbols";
 const ROWS = 3;
 const COLS = 3; // 3x3 grid
 
-// Probability weights for different symbols
+// Probability weights for different symbols - adjusted to favor the house
 const SYMBOL_WEIGHTS: Record<string, number> = {
-  'pi-logo': 15,
-  'pi-symbol': 18,
-  'pi-314': 20,
-  'pi-bcv': 22,
-  'pi-node': 25,
-  'pi-314-alt': 12,
-  'pi-symbol-alt': 20,
-  'pi-node-alt': 10,
-  'pi-special': 5
+  'pi-logo': 20,      // High frequency, modest payout
+  'pi-symbol': 20,    // High frequency, modest payout
+  'pi-314': 18,       // Medium frequency
+  'pi-bcv': 16,       // Medium frequency
+  'pi-node': 14,      // Medium frequency
+  'pi-314-alt': 6,    // Low frequency, wild
+  'pi-symbol-alt': 10, // Low frequency
+  'pi-node-alt': 4,    // Very low frequency, scatter
+  'pi-special': 2      // Extremely rare, jackpot
 };
 
 // Get a random symbol based on weights
@@ -47,6 +47,40 @@ export const generateGrid = (): SymbolType[][] => {
       rowSymbols.push(getRandomSymbol());
     }
     grid.push(rowSymbols);
+  }
+  
+  return grid;
+};
+
+// Generate a grid with forced win - for admin testing
+export const generateForcedWinGrid = (winType: 'regular' | 'big' | 'jackpot'): SymbolType[][] => {
+  const grid: SymbolType[][] = [];
+  
+  // Generate a base grid with random symbols
+  for (let row = 0; row < ROWS; row++) {
+    const rowSymbols: SymbolType[] = [];
+    for (let col = 0; col < COLS; col++) {
+      rowSymbols.push(getRandomSymbol());
+    }
+    grid.push(rowSymbols);
+  }
+  
+  // Override with winning pattern based on type
+  if (winType === 'jackpot') {
+    // Put 3 special symbols in a line for jackpot
+    grid[0][0] = 'pi-special';
+    grid[0][1] = 'pi-special';
+    grid[0][2] = 'pi-special';
+  } else if (winType === 'big') {
+    // Put 3 high-value symbols in a line
+    grid[1][0] = 'pi-logo'; // High value
+    grid[1][1] = 'pi-logo';
+    grid[1][2] = 'pi-logo';
+  } else {
+    // Regular win with 3 medium-value symbols
+    grid[2][0] = 'pi-bcv'; // Medium value
+    grid[2][1] = 'pi-bcv';
+    grid[2][2] = 'pi-bcv';
   }
   
   return grid;

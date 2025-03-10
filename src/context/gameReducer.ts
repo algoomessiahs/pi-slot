@@ -1,7 +1,8 @@
 
-import { GameState, SpinResult } from '../types/game';
+import { GameState, SpinResult, WinForceType } from '../types/game';
 import { GameAction } from './gameActions';
 import { toast } from "sonner";
+import { stopAllSounds } from '../utils/soundUtils';
 
 // Initial game state
 export const initialState: GameState = {
@@ -18,6 +19,8 @@ export const initialState: GameState = {
   inFreeSpinMode: false,
   isJackpotActive: false, // Flag to indicate if jackpot is active
   adminMode: false, // Admin mode for testing (default off)
+  forcedWinType: null, // No forced win by default
+  testMode: false, // Test mode off by default
 };
 
 // Bet limits
@@ -135,9 +138,16 @@ export const gameReducer = (state: GameState, action: GameAction): GameState => 
       };
     
     case 'TOGGLE_AUTO_PLAY':
+      const newAutoPlay = !state.autoPlay;
+      
+      // If turning off autoplay, ensure all sounds stop
+      if (!newAutoPlay) {
+        stopAllSounds();
+      }
+      
       return {
         ...state,
-        autoPlay: !state.autoPlay,
+        autoPlay: newAutoPlay,
       };
     
     case 'UPDATE_JACKPOT':
@@ -161,6 +171,7 @@ export const gameReducer = (state: GameState, action: GameAction): GameState => 
         ...initialState,
         jackpot: state.jackpot, // Keep jackpot amount
         adminMode: state.adminMode, // Keep admin mode setting
+        testMode: state.testMode, // Keep test mode setting
       };
     
     case 'SET_FREE_SPINS':
@@ -188,6 +199,30 @@ export const gameReducer = (state: GameState, action: GameAction): GameState => 
       return {
         ...state,
         balance: action.amount,
+      };
+    
+    case 'FORCE_WIN':
+      if (action.winType) {
+        toast.info(`Forced ${action.winType} win activated`);
+      }
+      
+      return {
+        ...state,
+        forcedWinType: action.winType,
+      };
+    
+    case 'TOGGLE_TEST_MODE':
+      const newTestMode = !state.testMode;
+      
+      if (newTestMode) {
+        toast.info("Test mode activated - House edge reduced");
+      } else {
+        toast.info("Test mode deactivated - Normal house edge");
+      }
+      
+      return {
+        ...state,
+        testMode: newTestMode,
       };
       
     default:

@@ -1,6 +1,6 @@
 
 import React from "react";
-import { playSoundIfEnabled } from "../utils/soundUtils";
+import { playSoundIfEnabled, stopAllSounds } from "../utils/soundUtils";
 
 interface SpinButtonProps {
   onSpin: () => void;
@@ -11,6 +11,8 @@ interface SpinButtonProps {
 const SpinButton: React.FC<SpinButtonProps> = ({ onSpin, disabled, freeSpinsRemaining }) => {
   const handleSpin = () => {
     if (!disabled) {
+      // Stop any existing sounds before playing the button click
+      stopAllSounds();
       playSoundIfEnabled('buttonClick');
       onSpin();
     }

@@ -1,5 +1,5 @@
 
-import { SpinResult } from '../types/game';
+import { SpinResult, WinForceType } from '../types/game';
 
 // Action types
 export type GameAction =
@@ -12,5 +12,7 @@ export type GameAction =
   | { type: 'RESET_GAME' }
   | { type: 'SET_FREE_SPINS'; count: number }
   | { type: 'USE_FREE_SPIN' }
-  | { type: 'TOGGLE_ADMIN_MODE' } // For testing features
-  | { type: 'SET_BALANCE'; amount: number }; // For admin to set balance
+  | { type: 'TOGGLE_ADMIN_MODE' }
+  | { type: 'SET_BALANCE'; amount: number }
+  | { type: 'FORCE_WIN'; winType: WinForceType }
+  | { type: 'TOGGLE_TEST_MODE' }; // For testing features

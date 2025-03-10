@@ -7,7 +7,9 @@ import {
   CoinsIcon,
   TrophyIcon,
   FolderIcon,
-  RotateCcw
+  RotateCcw,
+  ZapIcon,
+  DollarSignIcon
 } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -18,7 +20,9 @@ const AdminPanel: React.FC = () => {
     setBalance, 
     setFreeSpins, 
     setJackpot,
-    resetGame
+    resetGame,
+    forceWin,
+    toggleTestMode
   } = useGame();
   
   const [balanceInput, setBalanceInput] = useState(state.balance.toString());
@@ -145,6 +149,43 @@ const AdminPanel: React.FC = () => {
             Set
           </button>
         </form>
+        
+        {/* Force Win Buttons */}
+        <div className="grid grid-cols-3 gap-2">
+          <button 
+            onClick={() => forceWin('regular')}
+            className="bg-green-600 hover:bg-green-700 text-white px-2 py-1.5 rounded text-sm flex flex-col items-center justify-center"
+          >
+            <DollarSignIcon size={16} />
+            <span className="text-xs mt-1">Small Win</span>
+          </button>
+          
+          <button 
+            onClick={() => forceWin('big')}
+            className="bg-blue-600 hover:bg-blue-700 text-white px-2 py-1.5 rounded text-sm flex flex-col items-center justify-center"
+          >
+            <DollarSignIcon size={16} />
+            <DollarSignIcon size={16} className="-mt-1" />
+            <span className="text-xs mt-1">Big Win</span>
+          </button>
+          
+          <button 
+            onClick={() => forceWin('jackpot')}
+            className="bg-yellow-600 hover:bg-yellow-700 text-white px-2 py-1.5 rounded text-sm flex flex-col items-center justify-center"
+          >
+            <TrophyIcon size={16} />
+            <span className="text-xs mt-1">Jackpot</span>
+          </button>
+        </div>
+        
+        {/* Test Mode Toggle */}
+        <button 
+          onClick={toggleTestMode}
+          className={`w-full py-1.5 rounded text-sm flex items-center justify-center ${state.testMode ? 'bg-purple-600 hover:bg-purple-700' : 'bg-gray-600 hover:bg-gray-700'}`}
+        >
+          <ZapIcon size={14} className="mr-1" />
+          Test Mode: {state.testMode ? 'ON' : 'OFF'}
+        </button>
         
         {/* Reset Game Button */}
         <button 

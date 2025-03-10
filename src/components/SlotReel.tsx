@@ -18,12 +18,29 @@ const SlotReel: React.FC<SlotReelProps> = ({
   highlightPositions = [] 
 }) => {
   const [isAnimating, setIsAnimating] = useState(false);
-  const [reelSymbols, setReelSymbols] = useState(symbols);
+  const [reelSymbols, setReelSymbols] = useState<SymbolType[]>([]);
   const [shouldHighlight, setShouldHighlight] = useState<boolean[]>([false, false, false]);
   const [spinSpeed, setSpinSpeed] = useState(100);
   const [isBlurred, setIsBlurred] = useState(false);
   const [spinTransition, setSpinTransition] = useState("none");
+  const spinSoundRef = useRef<HTMLAudioElement | null>(null);
   const reelRef = useRef<HTMLDivElement>(null);
+  
+  // Initialize with random symbols
+  useEffect(() => {
+    const randomSymbols = Array(3).fill(null).map(() => {
+      const randomIndex = Math.floor(Math.random() * SYMBOLS.length);
+      return SYMBOLS[randomIndex].id;
+    });
+    setReelSymbols(randomSymbols);
+  }, []);
+  
+  // When symbols prop changes and not spinning, update displayed symbols
+  useEffect(() => {
+    if (!isSpinning && !isAnimating) {
+      setReelSymbols(symbols);
+    }
+  }, [symbols, isSpinning, isAnimating]);
   
   // Process highlight positions
   useEffect(() => {
@@ -40,6 +57,22 @@ const SlotReel: React.FC<SlotReelProps> = ({
     }
   }, [highlightPositions]);
   
+  // Create and manage spin sound
+  useEffect(() => {
+    // Create audio element for spin sound
+    const audio = new Audio('/assets/sounds/spin.mp3');
+    audio.loop = true;
+    audio.volume = 0.3;
+    spinSoundRef.current = audio;
+    
+    return () => {
+      if (spinSoundRef.current) {
+        spinSoundRef.current.pause();
+        spinSoundRef.current = null;
+      }
+    };
+  }, []);
+  
   // Start spinning animation with delay
   useEffect(() => {
     if (isSpinning) {
@@ -49,10 +82,20 @@ const SlotReel: React.FC<SlotReelProps> = ({
         setSpinSpeed(80); // Start with faster speed
         setIsBlurred(true);
         setSpinTransition("all 0.1s ease-in"); // Smooth transition when starting
-        playSoundIfEnabled('spin', 0.3);
+        
+        // Play spin sound (only for the first reel to avoid overlapping)
+        if (delay === 0 && spinSoundRef.current) {
+          spinSoundRef.current.currentTime = 0;
+          spinSoundRef.current.play().catch(e => console.error("Error playing spin sound:", e));
+        }
       }, delay);
       
       return () => clearTimeout(startDelay);
+    } else {
+      // Stop spin sound when spinning stops
+      if (delay === 0 && spinSoundRef.current) {
+        spinSoundRef.current.pause();
+      }
     }
   }, [isSpinning, delay]);
   

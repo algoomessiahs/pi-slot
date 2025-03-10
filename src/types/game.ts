@@ -39,6 +39,8 @@ export interface SpinResult {
   isBonus: boolean;
 }
 
+export type WinForceType = 'regular' | 'big' | 'jackpot';
+
 export interface GameState {
   balance: number;
   bet: number;
@@ -53,4 +55,6 @@ export interface GameState {
   inFreeSpinMode: boolean;
   isJackpotActive: boolean; // Whether jackpot has reached the threshold
   adminMode: boolean; // Admin mode for testing
+  forcedWinType: WinForceType | null; // For admin testing
+  testMode: boolean; // Test mode flag for easier testing
 }

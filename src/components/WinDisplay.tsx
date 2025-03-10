@@ -1,7 +1,7 @@
 
 import React, { useEffect, useState } from "react";
 import { formatNumber } from "../utils/gameLogic";
-import { playSoundIfEnabled } from "../utils/soundUtils";
+import { playSoundIfEnabled, stopSound } from "../utils/soundUtils";
 import confetti from "canvas-confetti";
 
 interface WinDisplayProps {
@@ -15,7 +15,7 @@ const WinDisplay: React.FC<WinDisplayProps> = ({ winAmount }) => {
   // Generate coins effect
   useEffect(() => {
     if (winAmount > 0) {
-      // Play win sound
+      // Play win sound based on amount
       if (winAmount >= 10000) {
         playSoundIfEnabled('jackpot', 1.0);
         
@@ -70,9 +70,22 @@ const WinDisplay: React.FC<WinDisplayProps> = ({ winAmount }) => {
           setShowCoins(false);
         }, 3000);
         
-        return () => clearTimeout(timer);
+        return () => {
+          clearTimeout(timer);
+          // Stop sounds when component unmounts
+          stopSound('win');
+          stopSound('bigWin');
+          stopSound('jackpot');
+        };
       }
     }
+    
+    // Clean up sounds if component unmounts
+    return () => {
+      stopSound('win');
+      stopSound('bigWin');
+      stopSound('jackpot');
+    };
   }, [winAmount]);
   
   if (winAmount <= 0) return null;
