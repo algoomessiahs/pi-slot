@@ -1,5 +1,7 @@
+
 let audioContext: AudioContext | null = null;
 let isAudioInitialized = false;
+let isMuted = false; // Track mute state
 
 // Initialize audio context on user interaction
 export const initAudio = () => {
@@ -22,6 +24,20 @@ export const getAudioContext = () => {
     return null;
   }
   return audioContext;
+};
+
+// Toggle mute state and return new state
+export const toggleMute = (): boolean => {
+  isMuted = !isMuted;
+  if (isMuted) {
+    stopAllSounds();
+  }
+  return isMuted;
+};
+
+// Check if sound is currently muted
+export const isSoundMuted = (): boolean => {
+  return isMuted;
 };
 
 // Get sound URL
@@ -67,6 +83,11 @@ export const stopAllSounds = () => {
 
 // Play sound if enabled
 export const playSoundIfEnabled = (soundName: string, volume = 1.0) => {
+  // Don't play sounds if muted
+  if (isMuted) {
+    return;
+  }
+  
   // First stop any existing instance of this sound to prevent overlap
   stopSound(soundName);
   
