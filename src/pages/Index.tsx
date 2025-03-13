@@ -5,8 +5,11 @@ import { GameProvider } from "@/context/GameProvider";
 import { initAudio } from "@/utils/soundUtils";
 import { toast } from "sonner";
 import { SYMBOLS } from "@/data/symbols";
+import { useAuth } from "@/context/AuthContext";
 
 const Index = () => {
+  const { user } = useAuth();
+  
   // Preload assets when component mounts
   useEffect(() => {
     // Initialize audio
@@ -42,10 +45,10 @@ const Index = () => {
     
     // Show welcome toast
     toast("Welcome to Pi Slots!", {
-      description: "Spin to win Pi cryptocurrency rewards!",
+      description: user ? `Signed in as ${user.email}` : "Sign in to save your progress and winnings!",
       duration: 5000,
     });
-  }, []);
+  }, [user]);
   
   return (
     <GameProvider>

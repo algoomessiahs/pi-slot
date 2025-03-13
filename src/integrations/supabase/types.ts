@@ -9,7 +9,189 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      game_sessions: {
+        Row: {
+          ended_at: string | null
+          id: string
+          started_at: string
+          total_bet: number
+          total_spins: number
+          total_win: number
+          user_id: string
+        }
+        Insert: {
+          ended_at?: string | null
+          id?: string
+          started_at?: string
+          total_bet?: number
+          total_spins?: number
+          total_win?: number
+          user_id: string
+        }
+        Update: {
+          ended_at?: string | null
+          id?: string
+          started_at?: string
+          total_bet?: number
+          total_spins?: number
+          total_win?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "game_sessions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      game_transactions: {
+        Row: {
+          amount: number
+          created_at: string
+          details: Json | null
+          id: string
+          transaction_type: string
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          details?: Json | null
+          id?: string
+          transaction_type: string
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          details?: Json | null
+          id?: string
+          transaction_type?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "game_transactions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      jackpot: {
+        Row: {
+          amount: number
+          id: number
+          is_active: boolean
+          last_won_at: string | null
+          last_won_by: string | null
+        }
+        Insert: {
+          amount?: number
+          id?: number
+          is_active?: boolean
+          last_won_at?: string | null
+          last_won_by?: string | null
+        }
+        Update: {
+          amount?: number
+          id?: number
+          is_active?: boolean
+          last_won_at?: string | null
+          last_won_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "jackpot_last_won_by_fkey"
+            columns: ["last_won_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          balance: number
+          created_at: string
+          id: string
+          updated_at: string
+          username: string | null
+        }
+        Insert: {
+          balance?: number
+          created_at?: string
+          id: string
+          updated_at?: string
+          username?: string | null
+        }
+        Update: {
+          balance?: number
+          created_at?: string
+          id?: string
+          updated_at?: string
+          username?: string | null
+        }
+        Relationships: []
+      }
+      spin_results: {
+        Row: {
+          bet_amount: number
+          created_at: string
+          grid: Json
+          id: string
+          is_free_spin: boolean
+          is_jackpot: boolean
+          lines_played: number
+          session_id: string
+          user_id: string
+          win_amount: number
+        }
+        Insert: {
+          bet_amount: number
+          created_at?: string
+          grid: Json
+          id?: string
+          is_free_spin?: boolean
+          is_jackpot?: boolean
+          lines_played: number
+          session_id: string
+          user_id: string
+          win_amount: number
+        }
+        Update: {
+          bet_amount?: number
+          created_at?: string
+          grid?: Json
+          id?: string
+          is_free_spin?: boolean
+          is_jackpot?: boolean
+          lines_played?: number
+          session_id?: string
+          user_id?: string
+          win_amount?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "spin_results_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "game_sessions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "spin_results_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never

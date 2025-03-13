@@ -26,7 +26,7 @@ const SlotReel: React.FC<SlotReelProps> = ({
   const spinSoundRef = useRef<HTMLAudioElement | null>(null);
   const reelRef = useRef<HTMLDivElement>(null);
   
-  // Initialize with random symbols
+  // Initialize with random symbols instead of all the same
   useEffect(() => {
     const randomSymbols = Array(3).fill(null).map(() => {
       const randomIndex = Math.floor(Math.random() * SYMBOLS.length);

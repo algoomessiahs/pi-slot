@@ -1,168 +1,100 @@
-
-// Sound effect utility functions for the slot machine
-
-// Sound URLs
-const SOUNDS = {
-  spin: '/assets/sounds/spin.mp3',
-  win: '/assets/sounds/big-win.mp3',
-  bigWin: '/assets/sounds/big-win.mp3',
-  jackpot: '/assets/sounds/jackpot.mp3',
-  buttonClick: '/assets/sounds/click.mp3',
-  coinDrop: '/assets/sounds/coin-drop.mp3',
-};
-
-// Audio context singleton
 let audioContext: AudioContext | null = null;
+let isAudioInitialized = false;
 
-// Sound cache to avoid reloading
-const soundCache = new Map<string, AudioBuffer>();
-
-// Currently playing sounds
-const activeSounds = new Map<string, AudioBufferSourceNode>();
-
-// Initialize audio context (must be triggered by user interaction)
-export const initAudio = (): void => {
-  if (!audioContext) {
+// Initialize audio context on user interaction
+export const initAudio = () => {
+  if (!isAudioInitialized) {
     try {
-      audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
-      console.log("Audio context initialized successfully");
-    } catch (error) {
-      console.error("Failed to initialize audio context:", error);
+      window.AudioContext = window.AudioContext || (window as any).webkitAudioContext;
+      audioContext = new AudioContext();
+      isAudioInitialized = true;
+      console.log('Audio context initialized');
+    } catch (e) {
+      console.error('Web Audio API is not supported in this browser', e);
     }
   }
 };
 
-// Load a sound file
-const loadSound = async (url: string): Promise<AudioBuffer> => {
-  if (!audioContext) initAudio();
-  
-  // Check cache first
-  if (soundCache.has(url)) {
-    return soundCache.get(url)!;
+// Get audio context
+export const getAudioContext = () => {
+  if (!isAudioInitialized) {
+    console.warn('Audio context not initialized. Please call initAudio() first.');
+    return null;
   }
-  
-  try {
-    console.log(`Loading sound: ${url}`);
-    const response = await fetch(url);
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-    const arrayBuffer = await response.arrayBuffer();
-    const audioBuffer = await audioContext!.decodeAudioData(arrayBuffer);
-    soundCache.set(url, audioBuffer);
-    return audioBuffer;
-  } catch (error) {
-    console.error('Failed to load sound:', error);
-    throw error;
+  return audioContext;
+};
+
+// Get sound URL
+const getSoundUrl = (soundName: string): string | null => {
+  switch (soundName) {
+    case 'spin':
+      return '/assets/sounds/spin.mp3';
+    case 'win':
+      return '/assets/sounds/win.mp3';
+    case 'bigWin':
+      return '/assets/sounds/big-win.mp3';
+    case 'jackpot':
+      return '/assets/sounds/jackpot.mp3';
+    case 'buttonClick':
+      return '/assets/sounds/button-click.mp3';
+    default:
+      console.warn(`Sound not found: ${soundName}`);
+      return null;
   }
 };
 
-// Stop all currently playing sounds of a specific type
-export const stopSound = (sound: keyof typeof SOUNDS): void => {
-  if (activeSounds.has(sound)) {
-    try {
-      activeSounds.get(sound)?.stop();
-      activeSounds.delete(sound);
-      console.log(`Stopped sound: ${sound}`);
-    } catch (error) {
-      console.error(`Error stopping sound ${sound}:`, error);
-    }
+// Add a map to track active sounds
+const activeSounds: Map<string, HTMLAudioElement> = new Map();
+
+// Clear a specific sound
+export const stopSound = (soundName: string) => {
+  const sound = activeSounds.get(soundName);
+  if (sound) {
+    sound.pause();
+    sound.currentTime = 0;
+    activeSounds.delete(soundName);
   }
 };
 
-// Stop all currently playing sounds
-export const stopAllSounds = (): void => {
-  activeSounds.forEach((source, sound) => {
-    try {
-      source.stop();
-      console.log(`Stopped sound: ${sound}`);
-    } catch (error) {
-      console.error(`Error stopping sound ${sound}:`, error);
-    }
+// Clear all active sounds
+export const stopAllSounds = () => {
+  activeSounds.forEach((sound) => {
+    sound.pause();
+    sound.currentTime = 0;
   });
   activeSounds.clear();
 };
 
-// Categorize sounds by group (win sounds, UI sounds, etc.)
-const SOUND_GROUPS = {
-  winSounds: ['win', 'bigWin', 'jackpot'],
-  uiSounds: ['buttonClick', 'coinDrop'],
-  gameSounds: ['spin']
-};
-
-// Play a sound with optional volume control
-export const playSound = async (sound: keyof typeof SOUNDS, volume = 1, loop = false): Promise<void> => {
-  if (!audioContext) initAudio();
+// Play sound if enabled
+export const playSoundIfEnabled = (soundName: string, volume = 1.0) => {
+  // First stop any existing instance of this sound to prevent overlap
+  stopSound(soundName);
   
-  try {
-    console.log(`Attempting to play sound: ${sound}`);
-    
-    // Stop sounds in the same group
-    for (const [groupName, sounds] of Object.entries(SOUND_GROUPS)) {
-      if (sounds.includes(sound)) {
-        // Stop all sounds in this group
-        for (const groupSound of sounds) {
-          if (groupSound !== sound) {
-            stopSound(groupSound as keyof typeof SOUNDS);
-          }
-        }
-        break;
-      }
-    }
-    
-    // If this specific sound is already playing, stop it
-    stopSound(sound);
-    
-    const audioBuffer = await loadSound(SOUNDS[sound]);
-    const source = audioContext!.createBufferSource();
-    const gainNode = audioContext!.createGain();
-    
-    source.buffer = audioBuffer;
-    source.loop = loop;
-    gainNode.gain.value = volume;
-    
-    source.connect(gainNode);
-    gainNode.connect(audioContext!.destination);
-    
-    // Track the source for potential stopping later
-    activeSounds.set(sound, source);
-    
-    // Remove from active sounds when it ends naturally
-    source.onended = () => {
-      activeSounds.delete(sound);
-      console.log(`Sound ended naturally: ${sound}`);
-    };
-    
-    source.start();
-    console.log(`Sound played: ${sound}`);
-  } catch (error) {
-    console.error('Failed to play sound:', error);
+  const audioContext = getAudioContext();
+  if (!audioContext) {
+    console.warn('Audio context not initialized');
+    return;
   }
-};
 
-// Mute/unmute all sounds
-let isMuted = false;
+  const soundUrl = getSoundUrl(soundName);
+  if (!soundUrl) {
+    console.warn(`Sound not found: ${soundName}`);
+    return;
+  }
 
-export const toggleMute = (): boolean => {
-  isMuted = !isMuted;
+  const audio = new Audio(soundUrl);
+  audio.volume = volume;
   
-  if (isMuted) {
-    stopAllSounds();
-  }
+  // Store the sound in our active sounds map
+  activeSounds.set(soundName, audio);
   
-  console.log(`Sound is now ${isMuted ? 'muted' : 'unmuted'}`);
-  return isMuted;
-};
-
-export const isSoundMuted = (): boolean => {
-  return isMuted;
-};
-
-// Wrapper function that checks mute state before playing
-export const playSoundIfEnabled = async (sound: keyof typeof SOUNDS, volume = 1, loop = false): Promise<void> => {
-  if (!isMuted) {
-    await playSound(sound, volume, loop);
-  } else {
-    console.log(`Sound ${sound} not played because audio is muted`);
-  }
+  audio.play().catch(error => {
+    console.error(`Error playing sound ${soundName}:`, error);
+    activeSounds.delete(soundName);
+  });
+  
+  // Remove from active sounds when done playing
+  audio.onended = () => {
+    activeSounds.delete(soundName);
+  };
 };
