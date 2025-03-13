@@ -20,3 +20,27 @@ export const incrementValue = (value: number) => {
 export const addAmount = (currentValue: number, amountToAdd: number) => {
   return currentValue + amountToAdd;
 };
+
+// Helper function to update game session stats
+export const updateGameSessionStats = async (
+  sessionId: string, 
+  spinsIncrement: number, 
+  betAmount: number, 
+  winAmount: number
+) => {
+  try {
+    const { error } = await supabase
+      .from('game_sessions')
+      .update({
+        total_spins: supabase.rpc('increment', { x: spinsIncrement }),
+        total_bet: supabase.rpc('add_amount', { x: betAmount }),
+        total_win: supabase.rpc('add_amount', { x: winAmount })
+      })
+      .eq('id', sessionId);
+    
+    return { error };
+  } catch (error) {
+    console.error('Error updating game session stats:', error);
+    return { error };
+  }
+};

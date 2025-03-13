@@ -5,7 +5,7 @@ import { GameContext, GameContextType } from './gameContext';
 import { gameReducer, initialState } from './gameReducer';
 import { stopAllSounds, playSoundIfEnabled } from '../utils/soundUtils';
 import { useAuth } from './AuthContext';
-import { supabase } from '@/integrations/supabase/client';
+import { supabase, updateGameSessionStats } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 
 export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -124,14 +124,7 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
           is_free_spin: result.isFreeSpins
         }]);
       
-      await supabase
-        .from('game_sessions')
-        .update({
-          total_spins: supabase.rpc('increment', { x: 1 }),
-          total_bet: supabase.rpc('add_amount', { x: betAmount }),
-          total_win: supabase.rpc('add_amount', { x: result.totalWin })
-        })
-        .eq('id', sessionId);
+      await updateGameSessionStats(sessionId, 1, betAmount, result.totalWin);
     } catch (error) {
       console.error('Error recording spin result:', error);
     }
@@ -330,3 +323,4 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
     </GameContext.Provider>
   );
 };
+
