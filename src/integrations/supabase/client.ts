@@ -29,12 +29,25 @@ export const updateGameSessionStats = async (
   winAmount: number
 ) => {
   try {
+    // First, get the current values from the session
+    const { data: session, error: fetchError } = await supabase
+      .from('game_sessions')
+      .select('total_spins, total_bet, total_win')
+      .eq('id', sessionId)
+      .single();
+    
+    if (fetchError || !session) {
+      console.error('Error fetching game session:', fetchError);
+      return { error: fetchError };
+    }
+    
+    // Then update with the new calculated values
     const { error } = await supabase
       .from('game_sessions')
       .update({
-        total_spins: supabase.rpc('increment', { x: spinsIncrement }),
-        total_bet: supabase.rpc('add_amount', { x: betAmount }),
-        total_win: supabase.rpc('add_amount', { x: winAmount })
+        total_spins: session.total_spins + spinsIncrement,
+        total_bet: session.total_bet + betAmount,
+        total_win: session.total_win + winAmount
       })
       .eq('id', sessionId);
     
